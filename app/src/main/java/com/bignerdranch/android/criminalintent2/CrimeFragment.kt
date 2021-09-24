@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 
@@ -16,11 +17,10 @@ class CrimeFragment : Fragment() {
     private lateinit var crime :Crime
     private lateinit var titleField : EditText
     private lateinit var dateButton : Button
+    private lateinit var solvedCheckedBox: CheckBox
 
 
     /**  || MOST FUNCTIONS USED IN FRAGMENTS ARE LIFECYCLE CALL BACK FUNCTIONS USED TO PERSIST THE STATE OF THE UI. such as below ||  **/
-
-    // TODO WIRING UP WIDGETS.
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,12 +43,13 @@ class CrimeFragment : Fragment() {
         // Implementing their view by Id in Fragments
         titleField = view.findViewById(R.id.crime_title) as EditText
         dateButton = view.findViewById(R.id.crime_date) as Button
+        solvedCheckedBox = view.findViewById(R.id.crime_solved) as CheckBox
 
 
-
+        // implementing the Date Button
         dateButton.apply {
-            text = crime.date.toString()
-            isEnabled = false
+            text = crime.date.toString()  // The Date() will set the current date in the button for each crime
+            isEnabled = false     // this disables the button
         }
 
         return view
@@ -58,6 +59,8 @@ class CrimeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+
+        // TextWatcher class is used to monitor or watch user input text fields and update date on it or other things at the same time
         val titleWatcher = object : TextWatcher {
 
             override fun beforeTextChanged(
@@ -82,7 +85,17 @@ class CrimeFragment : Fragment() {
             }
         }
 
+        // This updates the title field with the title the User inputs as an EdiText
         titleField.addTextChangedListener(titleWatcher)
+
+
+
+        // I honestly don't understand what this does
+        solvedCheckedBox.apply {
+            setOnCheckedChangeListener { _, isChecked ->
+                crime.isSolved = isChecked
+            }
+        }
 
     }
 }
