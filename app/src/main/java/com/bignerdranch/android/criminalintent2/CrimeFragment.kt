@@ -22,13 +22,16 @@ class CrimeFragment : Fragment() {
 
     /**  || MOST FUNCTIONS USED IN FRAGMENTS ARE LIFECYCLE CALL BACK FUNCTIONS USED TO PERSIST THE STATE OF THE UI. such as below ||  **/
 
+    // This initializes our Activity. Sort of our entry point
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
     }
 
+
     // This is the function used to inflate the fragment_crime.xml layout provided with all the necessary parameters
     // Alternatively can be done by "LayoutInflater.inflate(R.layout.fragment_crime.xml)"
+    // This is where we do all the buttons and TextViews
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
