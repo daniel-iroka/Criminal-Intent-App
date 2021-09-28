@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 
         // this is null because there is no fragment with the given container ID. I don't know what this is
         if (currentFragment == null)  {
-            val fragment = CrimeFragment()
+            val fragment = CrimeListFragment.newInstance()
             supportFragmentManager
                 .beginTransaction()   // This creates an instance of our FragmentTransaction and adds our Container view and fragment to it and commit it
                 .add(R.id.fragment_container, fragment)

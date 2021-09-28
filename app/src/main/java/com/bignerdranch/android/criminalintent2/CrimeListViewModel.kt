@@ -3,10 +3,8 @@ package com.bignerdranch.android.criminalintent2
 import androidx.lifecycle.ViewModel
 
 
-// TODO When I come back next, I will continue to VIEW MODEL LIFE CYCLE WITH FRAGMENTS...
-
-
 // This is our ViewModel where we will store our list of crimes objects to eventually display on our screen
+// THIS FILE WILL HOLD OUR CRIME'S LIST AS A VIEW MODEL TO PRESERVE THE STATE OF OUR UI
 class CrimeListViewModel : ViewModel() {
 
     // A dummy "List" of crimes
