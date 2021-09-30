@@ -12,7 +12,7 @@ import android.widget.EditText
 import androidx.fragment.app.Fragment
 
 // This is our Fragment which we will use to work on our Fragment's view
-// THIS FILE WILL DETAIL OUR CRIMES DETAIL
+// THIS FILE WILL CONTAIN OUR CRIME'S DETAIL
 class CrimeFragment : Fragment() {
 
     private lateinit var crime :Crime
