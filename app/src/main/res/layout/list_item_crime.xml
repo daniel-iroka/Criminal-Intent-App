@@ -15,6 +15,6 @@
         android:id="@+id/crime_date"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Crime Date" />
+        android:text="@string/crime_date" />
 
 </LinearLayout>
