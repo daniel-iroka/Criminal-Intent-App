@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -76,6 +77,7 @@ class CrimeListFragment : Fragment() {
 
             private val titleTextView : TextView = itemView.findViewById(R.id.crime_title)
             private val dateTextView : TextView = itemView.findViewById(R.id.crime_date)
+            private val solvedImageView : ImageView = itemView.findViewById(R.id.crime_solved)
 
 
         // We set an onClickListener on each crime represented by their itemViews
@@ -92,6 +94,15 @@ class CrimeListFragment : Fragment() {
             this.crime = crime
             titleTextView.text = this.crime.title
             dateTextView.text = this.crime.date.toString()
+
+
+            // This code here determines the visibility of the ImageView based on an "if" else statement
+            // If crime.isSolved == true, show visibility, else, don't show View.GONE
+            solvedImageView.visibility = if (crime.isSolved) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         }
 
 
@@ -113,7 +124,7 @@ class CrimeListFragment : Fragment() {
     private inner class CrimeAdapter(var crimes: List<Crime>)
         : RecyclerView.Adapter<CrimeHolder>() {
 
-        // This wraps up the inflated recyclerView layout and passes to the CrimeHolder creating a new ViewHolder
+        // This wraps up the inflated recyclerView layout and passes to  the CrimeHolder creating a new ViewHolder
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
             return CrimeHolder(view)

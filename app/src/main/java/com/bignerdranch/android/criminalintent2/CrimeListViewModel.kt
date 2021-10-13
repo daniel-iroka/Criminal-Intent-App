@@ -14,7 +14,7 @@ class CrimeListViewModel : ViewModel() {
         for (i in 0 until 100) {
             val crime = Crime()
             crime.title = "Crime #$i"
-            crime.isSolved = i % 2 == 0
+            crime.isSolved = i % 2 == 0  // this is actually a Boolean Expression. The value of this(i % 2 == 0) will determine if isSolved is "true" or "false"
             crimes += crime
         }
     }
