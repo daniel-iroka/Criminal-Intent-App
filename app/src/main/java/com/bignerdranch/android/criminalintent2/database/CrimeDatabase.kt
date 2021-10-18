@@ -14,4 +14,8 @@ import com.bignerdranch.android.criminalintent2.Crime
 @Database(entities = [ Crime::class], version=1)
 @TypeConverters(CrimeTypeConverters::class)
 abstract class CrimeDatabase : RoomDatabase() {
+
+
+    // Hooking up our DAO to our Database
+    abstract fun crimeDao() : CrimeDao
 }
