@@ -5,12 +5,12 @@ import androidx.room.Query
 import com.bignerdranch.android.criminalintent2.Crime
 import java.util.*
 
-// TODO WHEN I COME BACK, I WILL GO THROUGH WHAT I HAVE DONE AND PRACTICE..
+
 
 // This file is our DATA ACCESS OBJECTS. It is an interface that contains functions which helps us to carry out operations in our database such as interact
-// with the contents of our database
+// with the contents of our database.
 // In this case, we will only carry two operations needing only two functions. One is toe return a list of all crimes in the database
-// AND Two, to return a single crime according to a given matching uuid(id)
+// AND Two, to return a single crime according to a given matching uuid(id).
 
 @Dao // This annotation tells Room that this is a DOA
 interface CrimeDao {
