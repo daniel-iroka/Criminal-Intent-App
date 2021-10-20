@@ -11,7 +11,7 @@ import com.bignerdranch.android.criminalintent2.Crime
 // And the last parameter signifies the version of our database, in this case 1 because we have only one database for now
 
 // Defining an abstract class here means that it cannot be directly instantiated, rather we will need to subclass it which keeps it safe
-@Database(entities = [ Crime::class], version=1)
+@Database(entities = [ Crime::class], version=1, exportSchema = false)
 @TypeConverters(CrimeTypeConverters::class)
 abstract class CrimeDatabase : RoomDatabase() {
 

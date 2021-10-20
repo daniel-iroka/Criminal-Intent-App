@@ -9,7 +9,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -22,20 +23,14 @@ private const val TAG = "CrimeListFragment"
 class CrimeListFragment : Fragment() {
 
     private lateinit var crimeRecyclerView : RecyclerView
-    private var adapter : CrimeAdapter? = null
+    private var adapter : CrimeAdapter? = CrimeAdapter(emptyList())
 
 
     // We set a ViewModelProvider to provide and instance of CrimeListViewModel and return it whenever the OS requests for a new one.
     private val crimeListViewModel: CrimeListViewModel by lazy {
-        ViewModelProviders.of(this).get(CrimeListViewModel::class.java)
+        ViewModelProvider(this).get(CrimeListViewModel::class.java)
     }
 
-
-    // Initializes our Activity
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d(TAG, "Total crimes: ${crimeListViewModel.crimes.size}")
-    }
 
 
     // This inflates the layout, setting up all the views
@@ -53,16 +48,32 @@ class CrimeListFragment : Fragment() {
         // A recycler view needs a LayoutManger to work. It is used to position items on the screen itself
         // The linearLayoutManager will position the items in the list vertically
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
+        crimeRecyclerView.adapter = adapter
 
-        updateUI()
 
         return view
     }
 
 
+    // This is our LiveData Observer. LiveData.observe() object gets notified when the LiveData has been received in this case a list of crimes
+    // The viewLifecycleOwner is tied to the life of the Activity or Fragment so that the process gets destroyed as the Activity does
+    // But in this case it is tied to our Fragment's view
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        crimeListViewModel.crimeListLiveData.observe(
+            viewLifecycleOwner,
+            Observer { crimes ->
+                crimes?.let {
+                    Log.i(TAG, "Got crimes ${crimes.size}")
+                    updateUI(crimes)
+                }
+            }
+        )
+    }
+
+
     // This is a function that connects our adapter to our RecyclerView and populates our UI
-    private fun updateUI() {
-        val crimes = crimeListViewModel.crimes
+    private fun updateUI(crimes: List<Crime>) {
         adapter = CrimeAdapter(crimes)
         crimeRecyclerView.adapter = adapter
     }
