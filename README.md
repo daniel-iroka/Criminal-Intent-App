@@ -1,5 +1,5 @@
 # Criminal-Intent-App
-A fun project to report crimes in your work place.
+A fun project to report crimes in your office or work place.
 
 # CriminalIntent ChallengeVersion
 
