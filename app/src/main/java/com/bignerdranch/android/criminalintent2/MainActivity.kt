@@ -2,8 +2,17 @@ package com.bignerdranch.android.criminalintent2
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import java.util.*
 
-class MainActivity : AppCompatActivity() {
+private const val TAG = "MainActivity"
+
+
+// TODO : WHEN I COME BACK, I WILL GO TO FRAGMENT ARGUMENTS....
+
+
+// Implementing Our Callbacks interface
+class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,4 +35,16 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    // This responds to a button click in our fragment through our interface, it then replaces our current fragment being hosted
+    // with the detail part of a Crime
+    override fun onCrimeSelected(crimeId: UUID) {
+        val fragment = CrimeFragment()
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)   // addToBackStack() = when a User presses Back, this will take him back to the Crime list
+            .commit()
+    }
+
 }
