@@ -1,5 +1,6 @@
 package com.bignerdranch.android.criminalintent2
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -7,12 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
 private const val TAG = "CrimeListFragment"
 
@@ -22,6 +23,21 @@ private const val TAG = "CrimeListFragment"
 // THIS FILE WILL BE THE FRAGMENT TO DISPLAY OUR CRIME LIST
 class CrimeListFragment : Fragment() {
 
+
+    /**
+     * Required interface for hosting activities
+     * Any Activity hosting this fragment must implement this interface
+     */
+    // This is our callbacks function
+    interface Callbacks {
+        fun onCrimeSelected(crimeId: UUID)
+    }
+
+
+    // This is our callbacks property that implements CallBacks?
+    private var callbacks: Callbacks? = null
+
+
     private lateinit var crimeRecyclerView : RecyclerView
     private var adapter : CrimeAdapter? = CrimeAdapter(emptyList())
 
@@ -29,6 +45,17 @@ class CrimeListFragment : Fragment() {
     // We set a ViewModelProvider to provide and instance of CrimeListViewModel and return it whenever the OS requests for a new one.
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProvider(this).get(CrimeListViewModel::class.java)
+    }
+
+
+
+
+    // This function sets the callbacks property
+    // The 'Context' object here refers to an instance of the hosting Activity(MainActivity) which is called when CrimeListFragment is attached to any Activity,
+    // which then calls in onAttach after its been "attached"
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as Callbacks?
     }
 
 
@@ -69,6 +96,14 @@ class CrimeListFragment : Fragment() {
                 }
             }
         )
+    }
+
+
+    // This function unsets our callbacks property. Its is a lifecycle function
+    // This sets the property to null meaning that our Activity is no longer Accessible
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
     }
 
 
@@ -120,7 +155,7 @@ class CrimeListFragment : Fragment() {
         // Since our ViewHolder implements the OnCLickListener itself, we need to implements its members,
         // In this case, we need to set what will happen when our button is clicked
         override fun onClick(v: View) {
-            Toast.makeText(context, "${crime.title} pressed!", Toast.LENGTH_SHORT).show()
+            callbacks?.onCrimeSelected(crime.id)
         }
 
         }
@@ -148,7 +183,6 @@ class CrimeListFragment : Fragment() {
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
             val crime = crimes[position]
             holder.bind(crime)    // The onBindViewHolder() then passes a particular crime according to its position
-            // TODO GO THROUGH.... WHEN I COME BACK
         }
 
 
