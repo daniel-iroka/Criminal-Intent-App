@@ -10,15 +10,31 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import java.util.*
 
 // This is our Fragment which we will use to work on our Fragment's view
 // THIS FILE WILL CONTAIN OUR CRIME'S DETAIL
+
+private const val TAG = "CrimeFragment"
+private const val ARG_CRIME_ID = "crime_id"
+
+// TODO : OPTIONAL : VISIT INTENTS IN ACTIVITIES.....
+
+
 class CrimeFragment : Fragment() {
+
 
     private lateinit var crime :Crime
     private lateinit var titleField : EditText
     private lateinit var dateButton : Button
     private lateinit var solvedCheckedBox: CheckBox
+
+
+    // Providing an instance of CrimeDetailViewModel
+    private val crimeDetailViewModel : CrimeDetailViewModel by lazy {
+        ViewModelProvider(this).get(CrimeDetailViewModel::class.java)
+    }
 
 
     /**  || MOST FUNCTIONS USED IN FRAGMENTS ARE LIFECYCLE CALL BACK FUNCTIONS USED TO PERSIST THE STATE OF THE UI. such as below ||  **/
@@ -27,6 +43,15 @@ class CrimeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
+
+
+        // This is how we pull or reference our fragments arguments passed from the hosting Activity, which is similar to "intents"
+        // We remember that we can only reference a value by its "key" in a key-value pair, so we use ARG_CRIME_ID
+        val crimeId : UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
+        crimeDetailViewModel.loadCrime(crimeId)    // we then connect the loaded crime from our CrimeDetailViewModel to our CrimeFragment
+        // todo : Implement Lifecycle.Observer
+
+
     }
 
 
@@ -101,6 +126,21 @@ class CrimeFragment : Fragment() {
             }
         }
 
+    }
+
+
+    // Here is where we are preparing our fragment arguments,create an instance of the CrimeFragment and bundle the received data to our fragment
+    // The arguments are characterized by key-value pairs
+    companion object {
+
+        fun newInstance(crimeId: UUID): CrimeFragment {
+            val args = Bundle().apply {
+                putSerializable(ARG_CRIME_ID, crimeId)
+            }
+            return CrimeFragment().apply {  // This is where we attach our "arguments" to our Fragment
+                arguments = args
+            }
+        }
     }
 }
 

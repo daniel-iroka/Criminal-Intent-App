@@ -7,8 +7,6 @@ import java.util.*
 private const val TAG = "MainActivity"
 
 
-// TODO : WHEN I COME BACK, I WILL GO TO FRAGMENT ARGUMENTS....
-
 
 // Implementing Our Callbacks interface
 class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks {
@@ -39,7 +37,7 @@ class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks {
     // This responds to a button click in our fragment through our interface, it then replaces our current fragment being hosted
     // with the detail part of a Crime
     override fun onCrimeSelected(crimeId: UUID) {
-        val fragment = CrimeFragment()
+        val fragment = CrimeFragment.newInstance(crimeId)
         supportFragmentManager
             .beginTransaction()
             .replace(R.id.fragment_container, fragment)
