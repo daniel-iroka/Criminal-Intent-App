@@ -7,12 +7,10 @@ import androidx.lifecycle.ViewModel
 import java.util.*
 
 
-// TODO : GO THROUGH USING LIVE DATA TRANSFORMATIONS AGAIN....
-
 class CrimeDetailViewModel() : ViewModel() {
 
     private val crimeRepository = CrimeRepository.get()
-    private val crimeIdLiveData = MutableLiveData<UUID>()   // this represents the ID of the crime about to be displayed by CrimeFragment
+    private val crimeIdLiveData = MutableLiveData<UUID>()   // this represents the ID of the crime about to be displayed by CrimeFragment's UI
 
 
     // This property retrieves the crime Object from the database to be displayed by Crime's fragment UI according to the passed ID
@@ -23,5 +21,10 @@ class CrimeDetailViewModel() : ViewModel() {
 
     fun loadCrime(crimeId: UUID) {
         crimeIdLiveData.value = crimeId
+    }
+
+    // This function writes a crime to the database when the user inputs in the detail part of the screen
+    fun saveCrime(crime: Crime) {
+        crimeRepository.updateCrime(crime)
     }
 }
