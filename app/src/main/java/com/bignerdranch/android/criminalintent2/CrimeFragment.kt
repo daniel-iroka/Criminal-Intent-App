@@ -19,13 +19,13 @@ import java.util.*
 private const val TAG = "CrimeFragment"
 private const val ARG_CRIME_ID = "crime_id"
 
-// TODO : OPTIONAL : VISIT INTENTS IN ACTIVITIES.....
+// TODO : OPTIONAL  ::  VISIT INTENTS IN ACTIVITIES.....
 
 
 class CrimeFragment : Fragment() {
 
 
-    private lateinit var crime :Crime
+    private lateinit var crime :Crime  // this crime property represents the USER'S EDITS i.e the crime the USER wrote
     private lateinit var titleField : EditText
     private lateinit var dateButton : Button
     private lateinit var solvedCheckedBox: CheckBox
@@ -49,8 +49,6 @@ class CrimeFragment : Fragment() {
         // We remember that we can only reference a value by its "key" in a key-value pair, so we use ARG_CRIME_ID
         val crimeId : UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         crimeDetailViewModel.loadCrime(crimeId)    // we then connect the loaded crime from our CrimeDetailViewModel to our CrimeFragment
-        // todo : Implement Lifecycle.Observer
-
 
     }
 
@@ -83,6 +81,36 @@ class CrimeFragment : Fragment() {
 
         return view
     }
+
+
+
+    // Here we have set a lifecycle Observer to notify us when a crime has been retrieved from our database
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        crimeDetailViewModel.crimeLiveData.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { crime ->
+                crime?.let {
+                    this.crime = crime
+                    updateUI()
+                }
+            }
+        )
+    }
+
+
+    // he function to populate our UI
+    private fun updateUI() {
+        titleField.setText(crime.title)
+        dateButton.text = crime.date.toString()
+        solvedCheckedBox.apply {
+            isChecked = crime.isSolved
+            jumpDrawablesToCurrentState()  // this skips the checkBox animation whenever we load crime
+        }
+    }
+
+
+
 
     // Listener for the EditText and other button
     override fun onStart() {
@@ -119,13 +147,22 @@ class CrimeFragment : Fragment() {
 
 
 
-        // I honestly don't understand what this does
+        // this code is for our checkBox and makes it checkable just as how an OnClickListener makes a
+        // button clickable
         solvedCheckedBox.apply {
             setOnCheckedChangeListener { _, isChecked ->
                 crime.isSolved = isChecked
             }
         }
 
+    }
+
+
+    // The Fragment.onStop() function is called whenever a fragment is no longer in memory, therefore this code below saves
+    // the USER crime input to the database whenever he/she leaves CrimeFragment such as pressing the back Button
+    override fun onStop() {
+        super.onStop()
+        crimeDetailViewModel.saveCrime(crime)
     }
 
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.bignerdranch.android.criminalintent2.database.CrimeDatabase
 import java.util.*
+import java.util.concurrent.Executors
 
 
 
@@ -30,10 +31,29 @@ class CrimeRepository private constructor(context: Context) {
     private val crimeDao = database.crimeDao()    // stores references to our DAO objects
 
 
+    // An Executor is an Object that references a thread and performs operations on that thread we specify
+    private val executor = Executors.newSingleThreadExecutor()  // this holds reference to "Executors" and defines a "newThread" where we want to perform operations
+
+
+
     // We added this here so that other components can perform operations on our database
     fun getCrimes(): LiveData<List<Crime>> = crimeDao.getCrimes()
-
     fun getCrime(id: UUID): LiveData<Crime?> = crimeDao.getCrime(id)
+
+
+
+    /** Below is where we Implement our functions with the "executor" object which then performs operations in a background thread. **/
+    fun updateCrime(crime: Crime)  {
+        executor.execute {
+            crimeDao.updateCrime(crime)
+        }
+    }
+
+    fun addCrime(crime: Crime)  {
+        executor.execute {
+            crimeDao.addCrime(crime)
+        }
+    }
 
 
 
