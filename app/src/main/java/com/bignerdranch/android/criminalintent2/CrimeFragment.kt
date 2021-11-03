@@ -18,8 +18,8 @@ import java.util.*
 
 private const val TAG = "CrimeFragment"
 private const val ARG_CRIME_ID = "crime_id"
+private const val DIALOG_DATE = "DialogDate"
 
-// TODO : OPTIONAL  ::  VISIT INTENTS IN ACTIVITIES.....
 
 
 class CrimeFragment : Fragment() {
@@ -74,9 +74,15 @@ class CrimeFragment : Fragment() {
 
 
         // implementing the Date Button
-        dateButton.apply {
-            text = crime.date.toString()  // The Date() will set the current date in the button for each crime
-            isEnabled = false     // this disables the button
+        dateButton.setOnClickListener {
+            DatePickerFragment.newInstance(crime.date).apply {
+
+                // This is a way we handle our DatePickerFragment just like all fragments handled by a fragmentManager
+                // this@CrimeFragment.parentFragmentManager references our DatePickerFragment and represents the FragmentManager of our hosting Activity
+                // which is also the hosting Activity of this Fragment's Activity
+
+                show(this@CrimeFragment.parentFragmentManager, DIALOG_DATE)
+            }
         }
 
         return view
@@ -166,7 +172,7 @@ class CrimeFragment : Fragment() {
     }
 
 
-    // Here is where we are preparing our fragment arguments,create an instance of the CrimeFragment and bundle the received data to our fragment
+    // Here is where we are preparing our fragment arguments, creating an instance of the CrimeFragment and bundle, then received data to our fragment
     // The arguments are characterized by key-value pairs
     companion object {
 
