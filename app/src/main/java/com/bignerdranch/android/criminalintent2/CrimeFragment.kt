@@ -3,14 +3,20 @@ package com.bignerdranch.android.criminalintent2
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentResultListener
+import androidx.fragment.app.setFragmentResult
+import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.ViewModelProvider
+import java.io.Serializable
 import java.util.*
 
 // This is our Fragment which we will use to work on our Fragment's view
@@ -18,14 +24,20 @@ import java.util.*
 
 private const val TAG = "CrimeFragment"
 private const val ARG_CRIME_ID = "crime_id"
-private const val DIALOG_DATE = "DialogDate"
+const val DIALOG_DATE = "DialogDate"
+const val REQUEST_DATE = "requestDate"
 
 
 
-class CrimeFragment : Fragment() {
+// todo : FIX DEPRECATION ERRORS ..
+
+/** FRAGMENT B **/
 
 
-    private lateinit var crime :Crime  // this crime property represents the USER'S EDITS i.e the crime the USER wrote
+class CrimeFragment : Fragment()   {
+
+
+    private lateinit var crime :Crime // this crime property represents the USER'S EDITS i.e the crime the USER wrote
     private lateinit var titleField : EditText
     private lateinit var dateButton : Button
     private lateinit var solvedCheckedBox: CheckBox
@@ -37,12 +49,11 @@ class CrimeFragment : Fragment() {
     }
 
 
-    /**  || MOST FUNCTIONS USED IN FRAGMENTS ARE LIFECYCLE CALL BACK FUNCTIONS USED TO PERSIST THE STATE OF THE UI. such as below ||  **/
-
     // This initializes our Activity. Sort of our entry point
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
+
 
 
         // This is how we pull or reference our fragments arguments passed from the hosting Activity, which is similar to "intents"
@@ -73,16 +84,27 @@ class CrimeFragment : Fragment() {
         solvedCheckedBox = view.findViewById(R.id.crime_solved) as CheckBox
 
 
+
+
+
         // implementing the Date Button
         dateButton.setOnClickListener {
-            DatePickerFragment.newInstance(crime.date).apply {
 
-                // This is a way we handle our DatePickerFragment just like all fragments handled by a fragmentManager
-                // this@CrimeFragment.parentFragmentManager references our DatePickerFragment and represents the FragmentManager of our hosting Activity
-                // which is also the hosting Activity of this Fragment's Activity
+            // This is the replacement of "setTargetFragment". We use this function to connect both fragments together
+            childFragmentManager.setFragmentResultListener("requestKey", viewLifecycleOwner) { Key, bundle ->
 
-                show(this@CrimeFragment.parentFragmentManager, DIALOG_DATE)
+                val result = bundle.getSerializable("bundleKey") as Date
+                crime.date = result
+                updateUI()
             }
+            updateUI()
+
+            // This is a way we handle our DatePickerFragment just like all fragments handled by a fragmentManager
+            // this@CrimeFragment.childFragmentManager references our DatePickerFragment and .childFragmentManager represents
+            // the FragmentManager managing that fragment which is a child of "CrimeFragment"
+
+            val f = DatePickerFragment.newInstance(crime.date)
+            f.show(this@CrimeFragment.childFragmentManager, DIALOG_DATE)
         }
 
         return view
@@ -185,5 +207,7 @@ class CrimeFragment : Fragment() {
             }
         }
     }
+
+
 }
 

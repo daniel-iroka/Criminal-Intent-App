@@ -9,11 +9,14 @@ private const val TAG = "MainActivity"
 
 
 // Implementing Our Callbacks interface
-class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks {
+class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks  {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+
 
         /** || MAKING USE OF THE FRAGMENT MANAGER BY USING THE "supportFragmentManager" TO HANDLE THE FRAGMENT FOR US. || **/
 

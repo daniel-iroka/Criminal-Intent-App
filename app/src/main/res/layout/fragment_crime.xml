@@ -6,6 +6,10 @@
     android:layout_height="match_parent"
     android:layout_margin="16dp">
 
+
+    <!-- Fragment A -->
+
+
     <TextView
         style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
