@@ -1,4 +1,4 @@
-package com.bignerdranch.android.criminalintent2
+package com.bignerdranch.android.criminalintentChallengeVersion
 
 import android.os.Bundle
 import android.text.Editable

@@ -1,5 +1,6 @@
-package com.bignerdranch.android.criminalintent2
+package com.bignerdranch.android.criminalintentChallengeVersion
 
+import android.content.Context
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
@@ -8,12 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.*
 
 private const val TAG = "CrimeListFragment"
 
@@ -27,8 +28,19 @@ private const val TAG = "CrimeListFragment"
 // THIS FILE WILL BE THE FRAGMENT TO DISPLAY OUR CRIME LIST
 class CrimeListFragment : Fragment() {
 
+
+    // Our CallBacks interface which will allow us to call functions on our Hosting Activity
+    interface CallBacks {
+        fun onCrimeSelected(crimeId: UUID)
+    }
+
+    private var callbacks: CallBacks? = null  // A property holding reference to our CallBacks
+
+
     private lateinit var crimeRecyclerView : RecyclerView
     private var adapter : CrimeAdapter? = CrimeAdapter(emptyList())
+
+
 
 
     // We set a ViewModelProvider to provide and instance of CrimeListViewModel and return it whenever the OS requests for a new one.
@@ -36,6 +48,13 @@ class CrimeListFragment : Fragment() {
         ViewModelProvider(this).get(CrimeListViewModel::class.java)
     }
 
+
+
+    // This function sets our callbacks property and is called whenever a fragment is connected or "attached" to an activity
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callbacks = context as CallBacks?
+    }
 
 
     // This inflates the layout, setting up all the views
@@ -59,6 +78,7 @@ class CrimeListFragment : Fragment() {
         return view
     }
 
+    // todo challenge
 
     // This is where we will set our LiveData observer which will notified when the data has been received from the database and is ready
     // to update the UI
@@ -74,6 +94,15 @@ class CrimeListFragment : Fragment() {
             }
         )
     }
+
+
+    // However, this function unsets our callbacks? property meaning that the instance of the hosting activity is no longer in memory
+    // It no longer exists setting it to null
+    override fun onDetach() {
+        super.onDetach()
+        callbacks = null
+    }
+
 
 
     // This is a function that connects our adapter to our RecyclerView and populates our UI
@@ -133,7 +162,7 @@ class CrimeListFragment : Fragment() {
         // Since our ViewHolder implements the OnCLickListener itself, we need to implements its members,
         // In this case, we need to set what will happen when our button is clicked
         override fun onClick(v: View) {
-            Toast.makeText(context, "${crime.title} pressed!", Toast.LENGTH_SHORT).show()
+            callbacks?.onCrimeSelected(crime.id)
         }
 
     }
@@ -201,11 +230,14 @@ class CrimeListFragment : Fragment() {
 
 
         // Retrieves a viewType
-        override fun getItemViewType(position: Int): Int {
-            val crime = crimes[position]
-            return crime.requiresPolice
 
-        }
+        // CHALLENGE CODE SNIPPET
+
+        /**override fun getItemViewType(position: Int): Int {
+            val crime = crimes[position]
+            return crime.requiresPolice(crime)
+
+        } **/
 
 
         // This obtains crimes from a particular position from the crime list and passes it to the CrimeHolder

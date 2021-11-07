@@ -1,4 +1,4 @@
-package com.bignerdranch.android.criminalintent2.database
+package com.bignerdranch.android.criminalintentChallengeVersion.database
 
 import androidx.room.TypeConverter
 import java.util.*

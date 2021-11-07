@@ -1,13 +1,15 @@
-package com.bignerdranch.android.criminalintent2
+package com.bignerdranch.android.criminalintentChallengeVersion
 
 import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.room.Room
-import com.bignerdranch.android.criminalintent2.database.CrimeDatabase
+import com.bignerdranch.android.criminalintentChallengeVersion.database.CrimeDatabase
+import com.bignerdranch.android.criminalintentChallengeVersion.database.migration_1_2
 import java.util.*
 
 
 /** THIS IS THE CHALLENGE VERSION OF CRIMINAL INTENT **/
+
 
 
 private const val DATABASE_NAME = "crime-database"  // stores references to our database
@@ -16,15 +18,14 @@ private const val DATABASE_NAME = "crime-database"  // stores references to our 
 // Our CrimeRepository is responsible for fetching and storing data in a local database or remote server
 class CrimeRepository private constructor(context: Context) {
 
-
-
     private val database : CrimeDatabase = Room.databaseBuilder(
         context.applicationContext,
         CrimeDatabase::class.java,
         DATABASE_NAME
-    ).build()
+    ).addMigrations(migration_1_2).build()
 
     private val crimeDao = database.crimeDao()    // stores references to our DAO objects
+
 
 
     // We added this here so that other components can perform operations on our database

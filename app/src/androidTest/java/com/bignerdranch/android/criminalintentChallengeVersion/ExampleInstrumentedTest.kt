@@ -1,4 +1,4 @@
-package com.bignerdranch.android.criminalintent2
+package com.bignerdranch.android.criminalintentChallengeVersion
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -1,9 +1,14 @@
-package com.bignerdranch.android.criminalintent2
+package com.bignerdranch.android.criminalintentChallengeVersion
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import java.util.*
 
-class MainActivity : AppCompatActivity() {
+private const val TAG = "MainActivity"
+
+class MainActivity : AppCompatActivity(), CrimeListFragment.CallBacks {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,5 +32,10 @@ class MainActivity : AppCompatActivity() {
         }
 
 
+    }
+
+    // We only pass in a Log message for now
+    override fun onCrimeSelected(crimeId: UUID) {
+        Log.d(TAG, "We got some crimeID right here woohoo $crimeId")
     }
 }

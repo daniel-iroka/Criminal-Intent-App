@@ -1,9 +1,9 @@
-package com.bignerdranch.android.criminalintent2.database
+package com.bignerdranch.android.criminalintentChallengeVersion.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
-import com.bignerdranch.android.criminalintent2.Crime
+import com.bignerdranch.android.criminalintentChallengeVersion.Crime
 import java.util.*
 
 /** THIS IS THE CHALLENGE VERSION OF CRIMINAL INTENT **/
