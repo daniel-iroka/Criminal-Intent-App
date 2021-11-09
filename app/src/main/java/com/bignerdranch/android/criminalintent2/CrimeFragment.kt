@@ -19,7 +19,7 @@ import java.util.*
 private const val TAG = "CrimeFragment"
 private const val ARG_CRIME_ID = "crime_id"
 const val DIALOG_DATE = "DialogDate"
-const val REQUEST_DATE = "requestDate"
+private const val DIALOG_TIME = "DialogTime"
 
 
 
@@ -33,6 +33,7 @@ class CrimeFragment : Fragment()   {
     private lateinit var titleField : EditText
     private lateinit var dateButton : Button
     private lateinit var solvedCheckedBox: CheckBox
+    private lateinit var timePickerButton : Button
 
 
     // Providing an instance of CrimeDetailViewModel
@@ -95,16 +96,20 @@ class CrimeFragment : Fragment()   {
             // this@CrimeFragment.childFragmentManager references our DatePickerFragment and .childFragmentManager represents
             // the FragmentManager managing that fragment which is a child of "CrimeFragment"
 
-            val f = DatePickerFragment.newInstance(crime.date)
-            f.show(this@CrimeFragment.childFragmentManager, DIALOG_DATE)
+            val showDate = DatePickerFragment.newInstance(crime.date)
+            showDate.show(this@CrimeFragment.childFragmentManager, DIALOG_DATE)
         }
 
+
         return view
+
     }
 
 
 
+
     // Here we have set a lifecycle Observer to notify us when a crime has been retrieved from our database
+    // and this returns a list of our database crimes
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         crimeDetailViewModel.crimeLiveData.observe(
@@ -119,7 +124,7 @@ class CrimeFragment : Fragment()   {
     }
 
 
-    // he function to populate our UI
+    // the function to populate our UI
     private fun updateUI() {
         titleField.setText(crime.title)
         dateButton.text = crime.date.toString()
@@ -187,7 +192,7 @@ class CrimeFragment : Fragment()   {
 
 
     // Here is where we are preparing our fragment arguments, creating an instance of the CrimeFragment and bundle, then received data to our fragment
-    // The arguments are characterized by key-value pairs
+    // The arguments are characterized by key-value pairs and are where our received data is stored
     companion object {
 
         fun newInstance(crimeId: UUID): CrimeFragment {

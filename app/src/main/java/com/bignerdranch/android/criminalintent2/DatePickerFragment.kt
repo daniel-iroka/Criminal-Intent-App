@@ -4,7 +4,6 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.os.Bundle
 import android.widget.DatePicker
-import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import java.util.*
 
@@ -12,7 +11,7 @@ import java.util.*
 // This is our DatePickerFragment in which we will implement our DatePickerDialog inside and will be hosted by our Hosting Activity
 
 private const val ARG_DATE = "date"
-const val ARG_REQUEST_CODE = "requestCode"
+
 
 /** FRAGMENT A **/
 

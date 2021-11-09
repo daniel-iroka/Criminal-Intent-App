@@ -16,4 +16,5 @@ import java.util.*
 // The @PrimaryKey annotation is used to represent that a particular column will hold unique data that for our rows and be used to query or reference
 // each entry in our Entity or dataBase
 @Entity
-data class Crime(@PrimaryKey val id: UUID = UUID.randomUUID(), var title : String = "", var date: Date = Date(), var isSolved: Boolean = false )
+data class Crime(@PrimaryKey val id: UUID = UUID.randomUUID(), var title : String = "", var date: Date = Date(),
+                 var isSolved: Boolean = false )

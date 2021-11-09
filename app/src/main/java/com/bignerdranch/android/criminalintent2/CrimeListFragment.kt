@@ -3,9 +3,7 @@ package com.bignerdranch.android.criminalintent2
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -59,6 +57,12 @@ class CrimeListFragment : Fragment() {
     }
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)  // this tells our FragmentManager that our fragment needs to receive a menu callbacks
+    }
+
+
 
     // This inflates the layout, setting up all the views
     override fun onCreateView(
@@ -99,6 +103,7 @@ class CrimeListFragment : Fragment() {
     }
 
 
+
     // This function unsets our callbacks property. Its is a lifecycle function
     // This sets the property to null meaning that our Activity is no longer Accessible
     override fun onDetach() {
@@ -107,11 +112,25 @@ class CrimeListFragment : Fragment() {
     }
 
 
+
+
+
+    // This is the callBacks function used to inflate our menu resource layout file
+    // This callBacks is gotten from the fragment class
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime_list, menu)
+    }
+
+
+
     // This is a function that connects our adapter to our RecyclerView and populates our UI
     private fun updateUI(crimes: List<Crime>) {
         adapter = CrimeAdapter(crimes)
         crimeRecyclerView.adapter = adapter
     }
+
 
 
     // This class is where we wire up views in our item list with a ViewHolder
@@ -124,6 +143,7 @@ class CrimeListFragment : Fragment() {
             private val titleTextView : TextView = itemView.findViewById(R.id.crime_title)
             private val dateTextView : TextView = itemView.findViewById(R.id.crime_date)
             private val solvedImageView : ImageView = itemView.findViewById(R.id.crime_solved)
+
 
 
         // We set an onClickListener on each crime represented by their itemViews
@@ -140,6 +160,7 @@ class CrimeListFragment : Fragment() {
             this.crime = crime
             titleTextView.text = this.crime.title
             dateTextView.text = this.crime.date.toString()
+
 
 
             // This code here determines the visibility of the ImageView based on an "if" else statement
