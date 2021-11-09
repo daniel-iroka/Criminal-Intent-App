@@ -12,5 +12,5 @@ resentment and ready to focus on the business at hand.
 
 ## Screenshots
 
-<img src="FirstPicture.png" width=400> <img src="SecondPicture.png" width=400>
+<img src="FirstPicture.png" width=400>    <img src="SecondPicture.png" width=400>
 <img src="ThirdPicture.png" width=400>
