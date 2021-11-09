@@ -14,6 +14,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG = "CrimeListFragment"
@@ -42,7 +43,6 @@ class CrimeListFragment : Fragment() {
 
 
 
-
     // We set a ViewModelProvider to provide and instance of CrimeListViewModel and return it whenever the OS requests for a new one.
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProvider(this).get(CrimeListViewModel::class.java)
@@ -55,6 +55,7 @@ class CrimeListFragment : Fragment() {
         super.onAttach(context)
         callbacks = context as CallBacks?
     }
+
 
 
     // This inflates the layout, setting up all the views
@@ -78,7 +79,7 @@ class CrimeListFragment : Fragment() {
         return view
     }
 
-    // todo challenge
+
 
     // This is where we will set our LiveData observer which will notified when the data has been received from the database and is ready
     // to update the UI
@@ -148,7 +149,7 @@ class CrimeListFragment : Fragment() {
             /** CHALLENGE 2 : FORMATTING THE DATE - Using string.formatting, use the functions in the DateFormat class to change the format of the date. **/
             this.crime = crime
             titleTextView.text = this.crime.title
-            dateTextView.text = DateFormat.format("MMM dd, yyyy.", this.crime.date)
+            dateTextView.text = DateFormat.format("EEE, MMM dd, yyyy.", this.crime.date)
 
             solvedImageView.visibility = if (crime.isSolved) {
                 View.VISIBLE

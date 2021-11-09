@@ -2,7 +2,9 @@ package com.bignerdranch.android.criminalintentChallengeVersion.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
+import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import com.bignerdranch.android.criminalintentChallengeVersion.Crime
 import java.util.*
 
@@ -25,4 +27,10 @@ interface CrimeDao {
     // It tells ROOM to pull all columns for only the row whose id matches the ID value
     @Query("SELECT * FROM crime WHERE id=(:id)")
     fun getCrime(id: UUID): LiveData<Crime?>
+
+    @Update
+    fun updateCrime(crime: Crime)
+
+    @Insert
+    fun addCrime(crime: Crime)
 }

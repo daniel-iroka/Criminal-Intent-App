@@ -6,6 +6,7 @@ import androidx.room.Room
 import com.bignerdranch.android.criminalintentChallengeVersion.database.CrimeDatabase
 import com.bignerdranch.android.criminalintentChallengeVersion.database.migration_1_2
 import java.util.*
+import java.util.concurrent.Executors
 
 
 /** THIS IS THE CHALLENGE VERSION OF CRIMINAL INTENT **/
@@ -18,6 +19,7 @@ private const val DATABASE_NAME = "crime-database"  // stores references to our 
 // Our CrimeRepository is responsible for fetching and storing data in a local database or remote server
 class CrimeRepository private constructor(context: Context) {
 
+
     private val database : CrimeDatabase = Room.databaseBuilder(
         context.applicationContext,
         CrimeDatabase::class.java,
@@ -26,12 +28,27 @@ class CrimeRepository private constructor(context: Context) {
 
     private val crimeDao = database.crimeDao()    // stores references to our DAO objects
 
+    private val executor = Executors.newSingleThreadExecutor()
+
 
 
     // We added this here so that other components can perform operations on our database
     fun getCrimes(): LiveData<List<Crime>> = crimeDao.getCrimes()
-
     fun getCrime(id: UUID): LiveData<Crime?> = crimeDao.getCrime(id)
+
+
+    fun updateCrime(crime: Crime)  {
+        executor.execute {
+            crimeDao.updateCrime(crime)
+        }
+    }
+
+    fun addCrime(crime: Crime)  {
+        executor.execute {
+            crimeDao.addCrime(crime)
+        }
+    }
+
 
 
 

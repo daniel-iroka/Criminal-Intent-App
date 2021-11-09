@@ -2,7 +2,6 @@ package com.bignerdranch.android.criminalintentChallengeVersion
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import java.util.*
 
 private const val TAG = "MainActivity"
@@ -36,6 +35,12 @@ class MainActivity : AppCompatActivity(), CrimeListFragment.CallBacks {
 
     // We only pass in a Log message for now
     override fun onCrimeSelected(crimeId: UUID) {
-        Log.d(TAG, "We got some crimeID right here woohoo $crimeId")
+        val fragment = CrimeFragment.newInstance(crimeId)
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)   // addToBackStack() = when a User presses Back, this will take him back to the Crime list
+            .commit()
+
     }
 }

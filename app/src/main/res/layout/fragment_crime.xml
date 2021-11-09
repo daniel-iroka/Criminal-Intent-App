@@ -18,22 +18,47 @@
         android:layout_height="wrap_content"
         android:hint="@string/crime_title_hint"/>
 
+
     <TextView
         style="?android:listSeparatorTextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/crime_details_label"/>
 
-    <Button
-        android:id="@+id/crime_date"
-        android:layout_width="match_parent"
+
+    <!-- Challenge Tryout -->
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:text="Thurs, Sept 14, 2021"/>
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/crime_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:text="Nov, 8, 2021" />
+
+        <Button
+            android:id="@+id/crime_timePicker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="2:37"
+            android:layout_marginStart="30dp"/>
+
+
+
+    </LinearLayout>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+
+
 
         <CheckBox
             android:id="@+id/crime_solved"
@@ -41,11 +66,6 @@
             android:layout_height="wrap_content"
             android:text="@string/crime_solved_label"/>
 
-        <CheckBox
-            android:id="@+id/contact_police"
-            android:layout_width="133dp"
-            android:layout_height="wrap_content"
-            android:text="@string/contact_police" />
 
 
 
