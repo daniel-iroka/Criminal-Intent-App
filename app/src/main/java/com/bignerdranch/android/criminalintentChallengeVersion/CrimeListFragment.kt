@@ -4,17 +4,16 @@ import android.content.Context
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG = "CrimeListFragment"
@@ -40,6 +39,8 @@ class CrimeListFragment : Fragment() {
 
     private lateinit var crimeRecyclerView : RecyclerView
     private var adapter : CrimeAdapter? = CrimeAdapter(emptyList())
+    private lateinit var addCrimeButton : Button
+    private lateinit var addCrimeText : TextView
 
 
 
@@ -50,11 +51,53 @@ class CrimeListFragment : Fragment() {
 
 
 
-    // This function sets our callbacks property and is called whenever a fragment is connected or "attached" to an activity
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)  // We are explicitly telling our fragmentManager that CrimeListFragment needs to receive a call from onCreateOptions....
+    }
+
+
+
+
+    // This function sets our callbacks property and is called
+    // whenever a fragment is connected or "attached" to an activity
     override fun onAttach(context: Context) {
         super.onAttach(context)
         callbacks = context as CallBacks?
     }
+
+
+
+
+
+
+    // We call this callback function from our Activity to inflate our
+    // fragment with our menu layout_file
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.fragment_crime_list, menu)
+    }
+
+
+    // This callbacks function is called when an action_item or menu_item has been selected
+    // We then describe what we want to happen when it is selected which is to add a new crime
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+
+        return when(item.itemId) {
+            R.id.new_crime -> {
+                val crime = Crime()
+                crimeListViewModel.addCrime(crime)  // add a new crime to the database
+                callbacks?.onCrimeSelected(crime.id) // inform our hosting Activity that a new crime has been selected
+                true
+            }
+            else -> return onOptionsItemSelected(item)
+        }
+    }
+
+
 
 
 
@@ -74,6 +117,12 @@ class CrimeListFragment : Fragment() {
         // A recycler view needs a LayoutManger to work. It is used to position items on the screen itself
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
         crimeRecyclerView.adapter = adapter
+
+
+        addCrimeButton = view.findViewById(R.id.add_crime_button) as Button
+        addCrimeText = view.findViewById(R.id.add_crime_text) as TextView
+
+
 
 
         return view
@@ -97,8 +146,6 @@ class CrimeListFragment : Fragment() {
     }
 
 
-    // However, this function unsets our callbacks? property meaning that the instance of the hosting activity is no longer in memory
-    // It no longer exists setting it to null
     override fun onDetach() {
         super.onDetach()
         callbacks = null
@@ -106,10 +153,34 @@ class CrimeListFragment : Fragment() {
 
 
 
+    /** Challenge 6 - An Empty View for the RecyclerView **/
+
     // This is a function that connects our adapter to our RecyclerView and populates our UI
     private fun updateUI(crimes :List<Crime>) {
-        adapter = CrimeAdapter(crimes)
-        crimeRecyclerView.adapter = adapter
+
+        if(crimes.isEmpty()) {
+
+            addCrimeButton.isVisible = true
+
+            // initializing our add crime Button
+            addCrimeButton.setOnClickListener {
+
+                val crime = Crime()
+                crimeListViewModel.addCrime(crime)
+                callbacks?.onCrimeSelected(crime.id)
+
+
+            }
+
+        } else {
+            adapter = CrimeAdapter(crimes)
+            crimeRecyclerView.adapter = adapter
+        }
+
+
+        // Making the textView also disappear
+        addCrimeText.visibility = if (crimes.isEmpty()) View.VISIBLE else View.GONE
+
     }
 
 
@@ -135,8 +206,8 @@ class CrimeListFragment : Fragment() {
         private val solvedImageView : ImageView = itemView.findViewById(R.id.crime_solved)
 
 
-        // We set an onClickListener on each crime represented by their itemViews
-        // The itemView is the view for the entire row
+
+
         init {
             itemView.setOnClickListener(this)
         }
@@ -149,7 +220,7 @@ class CrimeListFragment : Fragment() {
             /** CHALLENGE 2 : FORMATTING THE DATE - Using string.formatting, use the functions in the DateFormat class to change the format of the date. **/
             this.crime = crime
             titleTextView.text = this.crime.title
-            dateTextView.text = DateFormat.format("EEE, MMM dd, yyyy.", this.crime.date)
+            dateTextView.text = DateFormat.format("EEEE, MMM dd, yyyy.", this.crime.date)
 
             solvedImageView.visibility = if (crime.isSolved) {
                 View.VISIBLE
@@ -160,8 +231,6 @@ class CrimeListFragment : Fragment() {
         }
 
 
-        // Since our ViewHolder implements the OnCLickListener itself, we need to implements its members,
-        // In this case, we need to set what will happen when our button is clicked
         override fun onClick(v: View) {
             callbacks?.onCrimeSelected(crime.id)
         }
@@ -193,7 +262,6 @@ class CrimeListFragment : Fragment() {
 
 
 
-    // A recyclerView does not create or hold ViewHolders by itself, rather it asks an "Adapter" to do so
     // This class here sets the data the Recycler view will display through the CrimeHolder
     private inner class CrimeAdapter(var crimes: List<Crime>)
         : RecyclerView.Adapter<BaseViewHolder<*>>() {

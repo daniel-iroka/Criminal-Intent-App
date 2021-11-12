@@ -38,14 +38,21 @@
             android:id="@+id/crime_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:text="Nov, 8, 2021" />
+            tools:text="THU, MAY 8, 2021" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:text="@string/set_time" />
 
         <Button
             android:id="@+id/crime_timePicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="2:37"
-            android:layout_marginStart="30dp"/>
+            tools:text="14:37"
+            android:layout_marginStart="5dp"/>
 
 
 
@@ -66,6 +73,13 @@
             android:layout_height="wrap_content"
             android:text="@string/crime_solved_label"/>
 
+
+        <CheckBox
+            android:id="@+id/call_police"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/call_police"
+            android:layout_marginStart="200dp"/>
 
 
 

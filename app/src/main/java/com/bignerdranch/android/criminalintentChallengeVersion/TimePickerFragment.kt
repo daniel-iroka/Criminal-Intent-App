@@ -5,8 +5,6 @@ import android.app.TimePickerDialog
 import android.os.Bundle
 import android.widget.TimePicker
 import androidx.fragment.app.DialogFragment
-import java.text.DateFormat.getTimeInstance
-import java.text.SimpleDateFormat
 import java.util.*
 
 
@@ -22,12 +20,7 @@ class TimePickerFragment: DialogFragment() {
                 _: TimePicker, hour, minute ->
 
 
-            // Sending the date back to DatePickerFragment
-            val time = arguments?.getSerializable(ARG2_DATE) as Date
             val calendar = Calendar.getInstance()
-            calendar.time = time
-
-
             val year = calendar.get(Calendar.YEAR)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
             val month = calendar.get(Calendar.MONTH)
@@ -45,10 +38,17 @@ class TimePickerFragment: DialogFragment() {
 
         }
 
+
+
         // INITIAL DATE
         val cal = Calendar.getInstance()
         val initialHour = cal.get(Calendar.HOUR_OF_DAY)
         val initialMinute = cal.get(Calendar.MINUTE)
+
+
+        // Sending the date back to DatePickerFragment
+        val time = arguments?.getSerializable(ARG2_DATE) as Date
+        cal.time = time
 
 
 

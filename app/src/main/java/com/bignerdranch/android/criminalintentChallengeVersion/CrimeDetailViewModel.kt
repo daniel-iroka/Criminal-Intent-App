@@ -15,7 +15,7 @@ class CrimeDetailViewModel() : ViewModel() {
     private val crimeRepository = CrimeRepository.get()
     private val crimeIdLiveData = MutableLiveData<UUID>()   // this represents the ID of the crime about to be displayed by CrimeFragment's UI
 
-    val time2 = Time()
+    val mainTime = Time()
 
     // This property retrieves the crime Object from the database to be displayed by Crime's fragment UI according to the passed ID
     var crimeLiveData: LiveData<Crime?> =

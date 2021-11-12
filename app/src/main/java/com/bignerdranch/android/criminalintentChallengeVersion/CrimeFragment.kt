@@ -17,8 +17,8 @@ import java.util.*
 
 /** THIS IS THE CHALLENGE VERSION OF CRIMINAL INTENT **/
 
-// TODO : LATER IMPROVE THE CHALLENGE AND GO TO THE NEXT CHALLENGE
-// TODO : IMPROVING THE CHALLENGE MEANS CHANGING THE RECEIVING DATE TO STRING AND TRYING TO MAKE IT SURVIVE CONFIGURATION CHANGE
+
+
 
 private const val ARG_CRIME_ID = "crime_id"
 const val DIALOG_DATE = "DialogDate"
@@ -58,9 +58,7 @@ class CrimeFragment : Fragment() {
     }
 
 
-    // This is the function used to inflate the fragment_crime.xml layout provided with all the necessary parameters
-    // Alternatively can be done by "LayoutInflater.inflate(R.layout.fragment_crime.xml)"
-    // This is where we do all the buttons and TextViews
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -107,13 +105,14 @@ class CrimeFragment : Fragment() {
 
             childFragmentManager.setFragmentResultListener("transferKey", viewLifecycleOwner)  { Key, bundle ->
 
+                val viewModelTime = crimeDetailViewModel.mainTime
                 val result = bundle.getSerializable("resultKey") as Date
-                time.time = result
+                viewModelTime.time = result
                 updateTime()
             }
             updateTime()
 
-            // DO something with the Time fragment...
+
             val showTime = TimePickerFragment.newInstance(time.time)
             showTime.show(this@CrimeFragment.childFragmentManager, DIALOG_TIME)
         }
@@ -154,7 +153,8 @@ class CrimeFragment : Fragment() {
 
     // function to updateTime on a crime wherever it is called
     private fun updateTime() {
-        timePickerButton.text = DateFormat.format("HH:mm", time.time)
+        val theTime = crimeDetailViewModel.mainTime
+        timePickerButton.text = DateFormat.format("HH:mm", theTime.time)
     }
 
 
