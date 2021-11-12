@@ -13,5 +13,8 @@ Each challenge can be traced according to its PremaLink. Look for the Green comm
 1. Challenge 1 - RecyclerView View Types  https://github.com/daniel-iroka/Criminal-Intent-App/blob/d40ce023b06cbffa0b26786122d24edc6faa95a5/app/src/main/java/com/bignerdranch/android/criminalintent2/CrimeListFragment.kt#L142
 2. Challenge 2 - Formatting the date  https://github.com/daniel-iroka/Criminal-Intent-App/blob/48f0d0810d26c21743f8b38cb85c57b5821f7b78/app/src/main/java/com/bignerdranch/android/criminalintent2/CrimeListFragment.kt#L119
 3. Challenge 3 - Address the Schema Warning  https://github.com/daniel-iroka/Criminal-Intent-App/blob/48f0d0810d26c21743f8b38cb85c57b5821f7b78/app/src/main/java/com/bignerdranch/android/criminalintent2/database/CrimeDatabase.kt#L13
+4. Challenge 4 -
+
+5. Challenge 5 - Add another DialogFragment https://github.com/daniel-iroka/Criminal-Intent-App/blob/8ddc722a2ceb28f499738528630b823ce382008e/app/src/main/java/com/bignerdranch/android/criminalintentChallengeVersion/TimePickerFragment.kt#L13 
 
 
