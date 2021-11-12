@@ -16,5 +16,6 @@ Each challenge can be traced according to its PremaLink. Look for the Green comm
 4. Challenge 4 -
 
 5. Challenge 5 - Add another DialogFragment https://github.com/daniel-iroka/Criminal-Intent-App/blob/8ddc722a2ceb28f499738528630b823ce382008e/app/src/main/java/com/bignerdranch/android/criminalintentChallengeVersion/TimePickerFragment.kt#L13 
+6. Challenge 6 - An Empty View for the RecyclerView https://github.com/daniel-iroka/Criminal-Intent-App/blob/b525c98376d99e52613dfd9df8a2ffc8e7f5ade8/app/src/main/java/com/bignerdranch/android/criminalintentChallengeVersion/CrimeListFragment.kt#L156
 
 
