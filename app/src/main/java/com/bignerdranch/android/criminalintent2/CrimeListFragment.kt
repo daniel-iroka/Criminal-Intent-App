@@ -59,7 +59,7 @@ class CrimeListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)  // this tells our FragmentManager that our fragment needs to receive a menu callbacks
+        setHasOptionsMenu(true)  // this "explicitly" tells our FragmentManager that our fragment needs to receive a call to menu(onCreateOptionsMenu)
     }
 
 
@@ -115,13 +115,36 @@ class CrimeListFragment : Fragment() {
 
 
 
-    // This is the callBacks function used to inflate our menu resource layout file
-    // This callBacks is gotten from the fragment class
+    // This is the callBacks function used to inflate our menu resource layout file in our CrimeListFragment
+    // This callBacks is gotten from the fragment or Activity class
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.fragment_crime_list, menu)
     }
+
+
+    /** NOTE : clicking on our action_item triggers the detailPart through our callBacks interface **/
+    // TODO : GO TO ANDROID ASSET STUDIO WHEN I COME BACK....
+
+    // This function is called when an action Item is clicked in an activity or fragment. It then matches our action_item id with the menuItem id
+    // and of course the menuItem id is the id defined in our menu file
+    // Basically we are describing what we want to happen whenever out action_item is clicked
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId)  {
+            R.id.new_crime -> {
+
+                // When our action_item is clicked, we will add a newCrime to our database and notify our Hosting Activity of a new crime selected
+                // through our interface when we press back button our detail part to list part
+                val crime = Crime()
+                crimeListViewModel.addCrime(crime)
+                callbacks?.onCrimeSelected(crime.id)
+                true   // this indicates that our menu processing is over
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
 
 
 
