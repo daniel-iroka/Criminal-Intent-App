@@ -11,7 +11,7 @@ class CrimeListViewModel : ViewModel() {
     val crimeListLiveData = crimeRepository.getCrimes()
 
 
-    // function to add a new crime to the database by the action item
+    // function to add a new crime to the database with the action item defined in CrimeListFragment
     fun addCrime(crime :Crime) {
         crimeRepository.addCrime(crime)
     }

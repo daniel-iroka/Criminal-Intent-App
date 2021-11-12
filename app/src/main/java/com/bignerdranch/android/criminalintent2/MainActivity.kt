@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks  {
 
     }
 
-    // This responds to a button click in our fragment through our interface, it then replaces our current fragment being hosted
+    // This responds to a button click in our CrimeListFragment through our callBacks interface, it then replaces our current fragment being hosted
     // with the detail part of a Crime
     override fun onCrimeSelected(crimeId: UUID) {
         val fragment = CrimeFragment.newInstance(crimeId)
