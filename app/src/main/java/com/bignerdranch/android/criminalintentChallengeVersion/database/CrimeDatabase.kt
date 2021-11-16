@@ -14,7 +14,7 @@ import com.bignerdranch.android.criminalintentChallengeVersion.Crime
 
 /** CHALLENGE 3 : ADDRESSING THE SCHEMA WARNING - A database schema represents the structure of a database. Address the warning by setting the export
  *                to false. **/
-@Database(entities = [ Crime::class], version=2, exportSchema = false)
+@Database(entities = [ Crime::class], version=3, exportSchema = false)
 @TypeConverters(CrimeTypeConverters::class)
 abstract class CrimeDatabase : RoomDatabase() {
 
@@ -24,9 +24,9 @@ abstract class CrimeDatabase : RoomDatabase() {
 
 }
 
-val migration_1_2 = object : Migration(1,2) {
+val migration_2_3 = object : Migration(2,3) {
     override fun migrate(database: SupportSQLiteDatabase) {
-        database.execSQL("ALTER TABLE Crime ADD COLUMN contactPolice TEXT NOT NULL DEFAULT 'Contact Police'")
+        database.execSQL("ALTER TABLE Crime ADD COLUMN time INT NOT NULL DEFAULT ''")
     }
 
 }

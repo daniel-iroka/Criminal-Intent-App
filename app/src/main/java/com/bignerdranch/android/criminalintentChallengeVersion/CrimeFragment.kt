@@ -35,7 +35,6 @@ class CrimeFragment : Fragment() {
     private lateinit var dateButton : Button
     private lateinit var solvedCheckedBox: CheckBox
     private lateinit var timePickerButton : Button
-    private lateinit var time: Time
 
 
     /**  || MOST FUNCTIONS USED IN FRAGMENTS ARE LIFECYCLE CALL BACK FUNCTIONS USED TO PERSIST THE STATE OF THE UI. such as below ||  **/
@@ -50,7 +49,6 @@ class CrimeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
-        time = Time()
 
 
         val crimeId : UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
@@ -105,15 +103,14 @@ class CrimeFragment : Fragment() {
 
             childFragmentManager.setFragmentResultListener("transferKey", viewLifecycleOwner)  { Key, bundle ->
 
-                val viewModelTime = crimeDetailViewModel.mainTime
                 val result = bundle.getSerializable("resultKey") as Date
-                viewModelTime.time = result
+                crime.time = result
                 updateTime()
             }
             updateTime()
 
 
-            val showTime = TimePickerFragment.newInstance(time.time)
+            val showTime = TimePickerFragment.newInstance(crime.time)
             showTime.show(this@CrimeFragment.childFragmentManager, DIALOG_TIME)
         }
 
@@ -153,8 +150,7 @@ class CrimeFragment : Fragment() {
 
     // function to updateTime on a crime wherever it is called
     private fun updateTime() {
-        val theTime = crimeDetailViewModel.mainTime
-        timePickerButton.text = DateFormat.format("HH:mm", theTime.time)
+        timePickerButton.text = DateFormat.format("HH:mm", crime.time)
     }
 
 

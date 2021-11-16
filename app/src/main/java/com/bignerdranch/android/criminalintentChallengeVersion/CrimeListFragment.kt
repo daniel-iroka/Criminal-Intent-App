@@ -123,7 +123,15 @@ class CrimeListFragment : Fragment() {
         addCrimeText = view.findViewById(R.id.add_crime_text) as TextView
 
 
+        // initializing our add crime Button
+        addCrimeButton.setOnClickListener {
 
+            val crime = Crime()
+            crimeListViewModel.addCrime(crime)
+            callbacks?.onCrimeSelected(crime.id)
+
+
+        }
 
         return view
     }
@@ -159,19 +167,7 @@ class CrimeListFragment : Fragment() {
     private fun updateUI(crimes :List<Crime>) {
 
         if(crimes.isEmpty()) {
-
             addCrimeButton.isVisible = true
-
-            // initializing our add crime Button
-            addCrimeButton.setOnClickListener {
-
-                val crime = Crime()
-                crimeListViewModel.addCrime(crime)
-                callbacks?.onCrimeSelected(crime.id)
-
-
-            }
-
         } else {
             adapter = CrimeAdapter(crimes)
             crimeRecyclerView.adapter = adapter
@@ -204,6 +200,7 @@ class CrimeListFragment : Fragment() {
         private val titleTextView : TextView = itemView.findViewById(R.id.crime_title)
         private val dateTextView : TextView = itemView.findViewById(R.id.crime_date)
         private val solvedImageView : ImageView = itemView.findViewById(R.id.crime_solved)
+        private val timeTextView : TextView = itemView.findViewById(R.id.time_textView)
 
 
 
@@ -221,6 +218,7 @@ class CrimeListFragment : Fragment() {
             this.crime = crime
             titleTextView.text = this.crime.title
             dateTextView.text = DateFormat.format("EEEE, MMM dd, yyyy.", this.crime.date)
+            timeTextView.text = DateFormat.format("HH:mm", crime.time)  // TODO: TEST WHEN I COME BACK.....
 
             solvedImageView.visibility = if (crime.isSolved) {
                 View.VISIBLE
