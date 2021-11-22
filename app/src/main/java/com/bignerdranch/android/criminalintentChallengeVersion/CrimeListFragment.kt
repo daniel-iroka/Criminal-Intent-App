@@ -51,12 +51,10 @@ class CrimeListFragment : Fragment() {
 
 
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)  // We are explicitly telling our fragmentManager that CrimeListFragment needs to receive a call from onCreateOptions....
     }
-
 
 
 
@@ -66,8 +64,6 @@ class CrimeListFragment : Fragment() {
         super.onAttach(context)
         callbacks = context as CallBacks?
     }
-
-
 
 
 
@@ -96,8 +92,6 @@ class CrimeListFragment : Fragment() {
             else -> return onOptionsItemSelected(item)
         }
     }
-
-
 
 
 
@@ -135,7 +129,6 @@ class CrimeListFragment : Fragment() {
 
         return view
     }
-
 
 
     // This is where we will set our LiveData observer which will notified when the data has been received from the database and is ready
@@ -180,7 +173,6 @@ class CrimeListFragment : Fragment() {
     }
 
 
-
     // A Generic ViewHolder to be implemented by other ViewHolders
     abstract class BaseViewHolder<T>(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
@@ -218,7 +210,7 @@ class CrimeListFragment : Fragment() {
             this.crime = crime
             titleTextView.text = this.crime.title
             dateTextView.text = DateFormat.format("EEEE, MMM dd, yyyy.", this.crime.date)
-            timeTextView.text = DateFormat.format("HH:mm", crime.time)  // TODO: TEST WHEN I COME BACK.....
+            timeTextView.text = DateFormat.format("HH:mm", crime.time)
 
             solvedImageView.visibility = if (crime.isSolved) {
                 View.VISIBLE
@@ -255,8 +247,6 @@ class CrimeListFragment : Fragment() {
             }
         }
     } **/
-
-
 
 
 
