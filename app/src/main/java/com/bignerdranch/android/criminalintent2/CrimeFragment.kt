@@ -1,6 +1,13 @@
 package com.bignerdranch.android.criminalintent2
 
+import android.app.Activity
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -11,6 +18,9 @@ import android.widget.CheckBox
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import android.text.format.DateFormat
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import java.util.*
 
 // This is our Fragment which we will use to work on our Fragment's view
@@ -19,11 +29,14 @@ import java.util.*
 private const val TAG = "CrimeFragment"
 private const val ARG_CRIME_ID = "crime_id"
 const val DIALOG_DATE = "DialogDate"
-private const val DIALOG_TIME = "DialogTime"
+private const val REQUEST_CONTACT = 1
+private const val DATE_FORMAT = "EEE, MMM, dd"
+
 
 
 
 /** FRAGMENT B **/
+// TODO : WHEN I COME BACK, I WILL START FROM GETTING DATA FROM THE CONTACT LIST.... AND THE GO FORWARD
 
 
 class CrimeFragment : Fragment()   {
@@ -33,13 +46,16 @@ class CrimeFragment : Fragment()   {
     private lateinit var titleField : EditText
     private lateinit var dateButton : Button
     private lateinit var solvedCheckedBox: CheckBox
-    private lateinit var timePickerButton : Button
+    private lateinit var reportButton: Button
+    private lateinit var suspectButton: Button
+
 
 
     // Providing an instance of CrimeDetailViewModel
     private val crimeDetailViewModel : CrimeDetailViewModel by lazy {
         ViewModelProvider(this).get(CrimeDetailViewModel::class.java)
     }
+
 
 
     // This initializes our Activity. Sort of our entry point
@@ -75,7 +91,8 @@ class CrimeFragment : Fragment()   {
         titleField = view.findViewById(R.id.crime_title) as EditText
         dateButton = view.findViewById(R.id.crime_date) as Button
         solvedCheckedBox = view.findViewById(R.id.crime_solved) as CheckBox
-
+        reportButton = view.findViewById(R.id.crime_report) as Button
+        suspectButton = view.findViewById(R.id.crime_suspect) as Button
 
 
 
@@ -107,7 +124,6 @@ class CrimeFragment : Fragment()   {
 
 
 
-
     // Here we have set a lifecycle Observer to notify us when a crime has been retrieved from our database
     // and this returns a list of our database crimes
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -124,6 +140,7 @@ class CrimeFragment : Fragment()   {
     }
 
 
+
     // the function to populate our UI
     private fun updateUI() {
         titleField.setText(crime.title)
@@ -132,7 +149,65 @@ class CrimeFragment : Fragment()   {
             isChecked = crime.isSolved
             jumpDrawablesToCurrentState()  // this skips the checkBox animation whenever we load crime
         }
+
+        if (crime.suspect.isNotEmpty()) {    // Adds the contact(suspect) name to the suspect button
+            suspectButton.text = crime.suspect
+        }
     }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        when {
+            resultCode != Activity.RESULT_OK -> return
+            requestCode == REQUEST_CONTACT && data != null -> {
+                val contactUri: Uri? = data.data
+                // Specify which fields you want your query to return values for
+                val queryFields = arrayOf(ContactsContract.Contacts.DISPLAY_NAME)
+                // Perform your query - the contactUri is like a "where" clause here
+                val cursor = contactUri?.let {
+                    requireActivity().contentResolver
+                        .query(it, queryFields, null, null, null)
+                }
+                cursor?.use {
+                // Verify cursor contains at least one result
+                    if (it.count == 0) {
+                        return
+                    }
+                // Pull out the first column of the first row of data -
+                // that is your suspect's name
+                    it.moveToFirst()
+                    val suspect = it.getString(0)
+                    crime.suspect = suspect
+                    crimeDetailViewModel.saveCrime(crime)
+                    suspectButton.text = suspect
+                }
+            }
+        }
+    }
+
+
+
+
+    // This function here is being used to replace the details of a crime at run time using string formatting
+    // Because we can't get the details of our crime at runtime, so this is kind of like a dummy data
+    private fun getCrimeReport(): String {
+        val solvedString = if (crime.isSolved) {
+            getString(R.string.crime_report_solved)
+        } else {
+            getString(R.string.crime_report_unsolved)
+        }
+
+        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
+
+        val suspect = if (crime.suspect.isBlank()) {
+            getString(R.string.crime_report_no_suspect)
+        } else {
+            getString(R.string.crime_report_suspect, crime.suspect)
+        }
+
+        return getString(R.string.crime_report, crime.title, dateString, solvedString, suspect)
+    }
+
 
 
 
@@ -167,6 +242,7 @@ class CrimeFragment : Fragment()   {
             }
         }
 
+
         // This updates the title field with the title the User inputs as an EdiText
         titleField.addTextChangedListener(titleWatcher)
 
@@ -177,6 +253,50 @@ class CrimeFragment : Fragment()   {
         solvedCheckedBox.apply {
             setOnCheckedChangeListener { _, isChecked ->
                 crime.isSolved = isChecked
+            }
+        }
+
+
+
+        // Initializing our reportButton to be able to send a crime report to another activity with the help of Intents
+        reportButton.setOnClickListener {
+
+            // The "type" of data we are sending is a "plain Text" which includes the contents of
+            // getCrimeReport() and our Crime Report subject
+            Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, getCrimeReport())
+                putExtra(
+                    Intent.EXTRA_SUBJECT,
+                    getString(R.string.crime_report_subject))
+            }.also { intent ->
+
+                val chooserIntent =
+                    Intent.createChooser(intent, getString(R.string.send_report))
+                startActivity(chooserIntent)
+            }
+        }
+
+
+
+        // Initializing our suspect button to be able to choose a suspect from our contacts list
+        suspectButton.apply {
+
+            val pickerContactIntent = Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI)
+            setOnClickListener {
+                startActivityForResult(pickerContactIntent, REQUEST_CONTACT)
+            }
+
+
+            // This code was added here because most Users may not have a contacts app
+            val packageManager : PackageManager = requireActivity().packageManager
+            // This will give us info about any contacts app found in our device
+            val resolvedActivity: ResolveInfo? =
+                packageManager.resolveActivity(pickerContactIntent,
+                PackageManager.MATCH_DEFAULT_ONLY)
+
+            if (resolvedActivity == null)  {
+                isEnabled = false  // this will disable our suspect button if no contacts app is found
             }
         }
 

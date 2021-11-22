@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks  {
         /** || MAKING USE OF THE FRAGMENT MANAGER BY USING THE "supportFragmentManager" TO HANDLE THE FRAGMENT FOR US. || **/
 
 
-        // This is our container id where we will be hosting our fragment. We first call our fragmentManager to inform where we will host it
+        // This is our container id where we will be hosting our fragment. We first call our fragmentManager to inform where we will host our fragment "IN"
         val currentFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container)
 
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks  {
         if (currentFragment == null)  {
             val fragment = CrimeListFragment()
             supportFragmentManager
-                .beginTransaction()   // This creates an instance of our FragmentTransaction and adds our Container view and fragment to it and commit it
+                .beginTransaction()   // This creates an instance of our FragmentTransaction and adds our Container view and fragment to it and commits it
                 .add(R.id.fragment_container, fragment)
                 .commit()
         }
