@@ -1,7 +1,6 @@
 package com.bignerdranch.android.criminalintentChallengeVersion
 
 import android.app.Activity
-import android.app.Notification
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo

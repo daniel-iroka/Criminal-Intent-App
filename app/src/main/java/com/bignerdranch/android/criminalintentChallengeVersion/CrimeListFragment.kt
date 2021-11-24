@@ -12,7 +12,9 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
 
@@ -38,7 +40,7 @@ class CrimeListFragment : Fragment() {
 
 
     private lateinit var crimeRecyclerView : RecyclerView
-    private var adapter : CrimeAdapter? = CrimeAdapter(emptyList())
+    private var adapter : CrimeAdapter? = CrimeAdapter()
     private lateinit var addCrimeButton : Button
     private lateinit var addCrimeText : TextView
 
@@ -158,12 +160,10 @@ class CrimeListFragment : Fragment() {
 
     // This is a function that connects our adapter to our RecyclerView and populates our UI
     private fun updateUI(crimes :List<Crime>) {
-
         if(crimes.isEmpty()) {
             addCrimeButton.isVisible = true
         } else {
-            adapter = CrimeAdapter(crimes)
-            crimeRecyclerView.adapter = adapter
+            (crimeRecyclerView.adapter as CrimeAdapter).submitList(crimes)
         }
 
 
@@ -249,15 +249,14 @@ class CrimeListFragment : Fragment() {
     } **/
 
 
+    // RecyclerView.Adapter<BaseViewHolder<*>>()
 
     // This class here sets the data the Recycler view will display through the CrimeHolder
-    private inner class CrimeAdapter(var crimes: List<Crime>)
-        : RecyclerView.Adapter<BaseViewHolder<*>>() {
-
+    private inner class CrimeAdapter
+        : ListAdapter<Crime, BaseViewHolder<*>>(CrimeDiffCallBack) {
 
         val firstViewType = 0
         val secondViewType = 1
-
 
 
         // This wraps up the inflated recyclerView layout and passes to the CrimeHolder creating a new ViewHolder
@@ -266,9 +265,7 @@ class CrimeListFragment : Fragment() {
             val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
             return CrimeHolder(view)
 
-
             // CHALLENGE CODE SNIPPET
-
             /** return if (viewType == firstViewType) {
                 return CrimeHolder(
                     layoutInflater.inflate(R.layout.serious_crime_layout, parent, false)
@@ -279,31 +276,37 @@ class CrimeListFragment : Fragment() {
                 )
             } **/
 
-
-
         }
 
-        override fun getItemCount() = crimes.size   // This reveals the number of items in the list of crimes
 
 
         // Retrieves a viewType
-
         // CHALLENGE CODE SNIPPET
-
         /**override fun getItemViewType(position: Int): Int {
             val crime = crimes[position]
             return crime.requiresPolice(crime)
 
         } **/
 
-
         // This obtains crimes from a particular position from the crime list and passes it to the CrimeHolder
         override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
-            val crime = crimes[position]
-            holder.bind(crime)
+            holder.bind(getItem(position))
         }
 
 
+    }
+
+
+    // This class implementation checks the difference between the new lists and changed lists in our recyclerView
+    // Which will be provided for our ListAdapter
+    object CrimeDiffCallBack : DiffUtil.ItemCallback<Crime>()  {
+        override fun areItemsTheSame(oldItem: Crime, newItem: Crime): Boolean {
+            return oldItem.id == newItem.id  // assigns new list and old list
+        }
+
+        override fun areContentsTheSame(oldItem: Crime, newItem: Crime): Boolean {
+            return oldItem.id == newItem.id
+        }
     }
 
 
