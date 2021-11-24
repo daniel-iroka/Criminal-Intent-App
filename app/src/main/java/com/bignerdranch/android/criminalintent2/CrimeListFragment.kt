@@ -7,8 +7,10 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ListAdapter
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
@@ -37,15 +39,14 @@ class CrimeListFragment : Fragment() {
 
 
     private lateinit var crimeRecyclerView : RecyclerView
-    private var adapter : CrimeAdapter? = CrimeAdapter(emptyList())
+    private var adapter : CrimeAdapter? = CrimeAdapter()
 
 
     // We set a ViewModelProvider to provide and instance of CrimeListViewModel and return it whenever the OS requests for a new one.
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProvider(this).get(CrimeListViewModel::class.java)
     }
-
-
+    
 
 
     // This function sets the callbacks property
@@ -114,7 +115,6 @@ class CrimeListFragment : Fragment() {
 
 
 
-
     // This is the callBacks function used to inflate our menu resource layout file in our CrimeListFragment
     // This callBacks is gotten from the fragment or Activity class
 
@@ -125,7 +125,7 @@ class CrimeListFragment : Fragment() {
 
 
     /** NOTE : clicking on our action_item triggers the detailPart through our callBacks interface **/
-    // TODO : GO TO ANDROID ASSET STUDIO WHEN I COME BACK....
+
 
     // This function is called when an action Item is clicked in an activity or fragment. It then matches our action_item id with the menuItem id
     // and of course the menuItem id is the id defined in our menu file
@@ -150,8 +150,9 @@ class CrimeListFragment : Fragment() {
 
     // This is a function that connects our adapter to our RecyclerView and populates our UI
     private fun updateUI(crimes: List<Crime>) {
-        adapter = CrimeAdapter(crimes)
-        crimeRecyclerView.adapter = adapter
+
+        // We did this because submitList() is a sub-class of ListAdapter
+        (crimeRecyclerView.adapter as CrimeAdapter).submitList(crimes)
     }
 
 
@@ -211,8 +212,8 @@ class CrimeListFragment : Fragment() {
 
     // A recyclerView does not create or hold ViewHolders by itself, rather it asks an "Adapter" to do so
     // This class here sets the data the Recycler view will display through the CrimeHolder
-    private inner class CrimeAdapter(var crimes: List<Crime>)
-        : RecyclerView.Adapter<CrimeHolder>() {
+    private inner class CrimeAdapter
+        : ListAdapter<Crime, CrimeHolder>(CrimeDiffCallBack) {
 
 
         // This wraps up the inflated recyclerView layout and passes to  the CrimeHolder creating a new ViewHolder
@@ -221,15 +222,30 @@ class CrimeListFragment : Fragment() {
             return CrimeHolder(view)
         }
 
-        override fun getItemCount() = crimes.size   // This reveals the number of items in the list of crimes
+
+//        No need for this because ListAdapter now handles the list of crimes
+//        override fun getItemCount() = crimes.size   // This reveals the number of items in the list of crimes
 
 
         // This obtains crimes from a particular position from the crime list and passes it to the CrimeHolder
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
-            val crime = crimes[position]
-            holder.bind(crime)    // The onBindViewHolder() then passes a particular crime according to its position
+            holder.bind(getItem(position))    // passes a particular crime according to its position
         }
 
+
+    }
+
+
+    // This implementation will be provided for our ListAdapter
+    // This implementation checks the difference between the current list and the changed list in our recyclerView
+    object CrimeDiffCallBack : DiffUtil.ItemCallback<Crime>()  {
+        override fun areItemsTheSame(oldItem: Crime, newItem: Crime): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Crime, newItem: Crime): Boolean {
+            return oldItem.id == newItem.id
+        }
 
     }
 
