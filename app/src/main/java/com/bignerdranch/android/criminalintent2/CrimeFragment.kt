@@ -36,7 +36,6 @@ private const val DATE_FORMAT = "EEE, MMM, dd"
 
 
 /** FRAGMENT B **/
-// TODO : WHEN I COME BACK, I WILL START FROM GETTING DATA FROM THE CONTACT LIST.... AND THE GO FORWARD
 
 
 class CrimeFragment : Fragment()   {
