@@ -30,6 +30,7 @@ private const val ARG_CRIME_ID = "crime_id"
 const val DIALOG_DATE = "DialogDate"
 private const val DIALOG_TIME = "DialogTime"
 private const val REQUEST_CONTACT = 1
+private const val REQUEST_PHONE = 1
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
 
@@ -46,6 +47,7 @@ class CrimeFragment : Fragment() {
     private lateinit var timePickerButton : Button
     private lateinit var reportButton: Button
     private lateinit var suspectButton: Button
+    private lateinit var callSuspectButton: Button
 
 
     /**  || MOST FUNCTIONS USED IN FRAGMENTS ARE LIFECYCLE CALL BACK FUNCTIONS USED TO PERSIST THE STATE OF THE UI. such as below ||  **/
@@ -86,6 +88,7 @@ class CrimeFragment : Fragment() {
         timePickerButton = view.findViewById(R.id.crime_timePicker) as Button
         reportButton = view.findViewById(R.id.crime_report) as Button
         suspectButton = view.findViewById(R.id.crime_suspect) as Button
+        callSuspectButton = view.findViewById(R.id.call_suspect_button) as Button
 
 
 
@@ -184,6 +187,43 @@ class CrimeFragment : Fragment() {
                     crimeDetailViewModel.saveCrime(crime)
                     suspectButton.text = suspect
                 }
+
+
+                /** Query handling our Suspect's Phone Number. **/
+
+                // Our phoneNumber's contact id which will be obtained from our previous query
+                val phoneContactsId = arrayOf(ContactsContract.CommonDataKinds.Phone._ID)
+                val phoneCursorId = contactUri?.let {
+                    requireActivity().contentResolver
+                        .query(contactUri, phoneContactsId, null, null, null)
+                }
+                phoneCursorId?.use {
+                    if (it.count == 0) return
+                    it.moveToFirst()
+                    val phoneId = it.getString(0)
+
+
+                    val phoneUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
+                    // Specifies what field we want our query to return which is a Phone Number
+                    val phoneQueryField = arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                    val phoneWhereClause = "${ContactsContract.CommonDataKinds.Phone.CONTACT_ID} = ?"
+                    val phoneQueryParameter = arrayOf(phoneId)
+
+                    val phoneCursor = requireActivity().contentResolver
+                        .query(phoneUri, phoneQueryField, phoneWhereClause, phoneQueryParameter, null)
+
+                    phoneCursor?.use { cursorPhone ->
+                        cursorPhone.moveToFirst()
+                        val phoneNumberValue = cursorPhone.getString(0)
+                        crime.phoneNumber = phoneNumberValue  // passed our phone NUmber to our property
+
+                    }
+                    crimeDetailViewModel.saveCrime(crime)
+
+                }
+
+
+
             }
         }
     }
@@ -295,6 +335,18 @@ class CrimeFragment : Fragment() {
                 isEnabled = false
             }
 
+
+        }
+
+
+        // Initializing our callSuspect Button
+        callSuspectButton.setOnClickListener {
+            val callerIntent = Intent(Intent.ACTION_DIAL).apply {
+
+                val phone = crime.phoneNumber
+                data = Uri.parse("tel:$phone")
+            }
+            startActivity(callerIntent)
 
         }
 

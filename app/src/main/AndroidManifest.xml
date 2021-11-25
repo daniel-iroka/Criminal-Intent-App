@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bignerdranch.android.criminalintentChallengeVersion">
 
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
     <application
         android:name="com.bignerdranch.android.criminalintentChallengeVersion.CriminalIntentApplication"
         android:allowBackup="true"
