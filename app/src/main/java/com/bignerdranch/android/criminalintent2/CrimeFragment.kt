@@ -5,33 +5,30 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import android.text.format.DateFormat
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
+import android.widget.*
+import androidx.core.content.FileProvider
+import java.io.File
 import java.util.*
 
 // This is our Fragment which we will use to work on our Fragment's view
 // THIS FILE WILL CONTAIN OUR CRIME'S DETAIL
 
-private const val TAG = "CrimeFragment"
 private const val ARG_CRIME_ID = "crime_id"
 const val DIALOG_DATE = "DialogDate"
 private const val REQUEST_CONTACT = 1
+private const val REQUEST_PHOTO = 2
 private const val DATE_FORMAT = "EEE, MMM, dd"
-
 
 
 
@@ -42,19 +39,21 @@ class CrimeFragment : Fragment()   {
 
 
     private lateinit var crime :Crime // this crime property represents the USER'S EDITS i.e the crime the USER wrote
+    private lateinit var photoFile: File
+    private lateinit var photoUri: Uri
     private lateinit var titleField : EditText
     private lateinit var dateButton : Button
     private lateinit var solvedCheckedBox: CheckBox
     private lateinit var reportButton: Button
     private lateinit var suspectButton: Button
-
+    private lateinit var photoButton: ImageButton
+    private lateinit var photoView: ImageView
 
 
     // Providing an instance of CrimeDetailViewModel
     private val crimeDetailViewModel : CrimeDetailViewModel by lazy {
         ViewModelProvider(this).get(CrimeDetailViewModel::class.java)
     }
-
 
 
     // This initializes our Activity. Sort of our entry point
@@ -92,6 +91,8 @@ class CrimeFragment : Fragment()   {
         solvedCheckedBox = view.findViewById(R.id.crime_solved) as CheckBox
         reportButton = view.findViewById(R.id.crime_report) as Button
         suspectButton = view.findViewById(R.id.crime_suspect) as Button
+        photoButton = view.findViewById(R.id.crime_camera) as ImageButton
+        photoView = view.findViewById(R.id.crime_photo) as ImageView
 
 
 
@@ -100,7 +101,7 @@ class CrimeFragment : Fragment()   {
         dateButton.setOnClickListener {
 
             // This is the replacement of "setTargetFragment". We use this function to connect both fragments together
-            childFragmentManager.setFragmentResultListener("requestKey", viewLifecycleOwner) { Key, bundle ->
+            childFragmentManager.setFragmentResultListener("requestKey", viewLifecycleOwner) { _, bundle ->
 
                 val result = bundle.getSerializable("bundleKey") as Date
                 crime.date = result
@@ -132,6 +133,9 @@ class CrimeFragment : Fragment()   {
             androidx.lifecycle.Observer { crime ->
                 crime?.let {
                     this.crime = crime
+                    photoFile = crimeDetailViewModel.getPhotoFile(crime)
+                    // getUruForFile takes in a file path and translates it to a Uri that the camera app can understand
+                    photoUri = FileProvider.getUriForFile(requireActivity(), "com.bignerdranch.android.criminalintent2.fileprovider", photoFile)
                     updateUI()
                 }
             }
@@ -209,8 +213,6 @@ class CrimeFragment : Fragment()   {
 
 
 
-
-
     // Listener for the EditText and other button
     override fun onStart() {
         super.onStart()
@@ -244,7 +246,6 @@ class CrimeFragment : Fragment()   {
 
         // This updates the title field with the title the User inputs as an EdiText
         titleField.addTextChangedListener(titleWatcher)
-
 
 
         // this code is for our checkBox and makes it checkable just as how an OnClickListener makes a
@@ -288,6 +289,7 @@ class CrimeFragment : Fragment()   {
 
 
             // This code was added here because most Users may not have a contacts app
+            // and disables the Button if none is found
             val packageManager : PackageManager = requireActivity().packageManager
             // This will give us info about any contacts app found in our device
             val resolvedActivity: ResolveInfo? =
@@ -295,8 +297,44 @@ class CrimeFragment : Fragment()   {
                 PackageManager.MATCH_DEFAULT_ONLY)
 
             if (resolvedActivity == null)  {
-                isEnabled = false  // this will disable our suspect button if no contacts app is found
+                isEnabled = false  // and this will disable our suspect button if no contacts app is found
             }
+        }
+
+
+        // Initializing our photoButton to allow Users to take the picture of a crime
+        photoButton.apply {
+            val packageManager: PackageManager = requireActivity().packageManager
+
+            val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val resolvedActivity: ResolveInfo? =
+                packageManager.resolveActivity(captureImage,
+                PackageManager.MATCH_DEFAULT_ONLY)
+
+            // This will disable our photoButton if no activity that matches our Intent was found
+            if (resolvedActivity == null) {
+                isEnabled = false
+            }
+
+            setOnClickListener {
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+
+                // This checks for cameraActivities matching our Intent
+                val cameraActivities: List<ResolveInfo> =
+                    packageManager.queryIntentActivities(captureImage,
+                    PackageManager.MATCH_DEFAULT_ONLY)
+
+                for (cameraActivity in cameraActivities) {
+                    requireActivity().grantUriPermission(
+                        cameraActivity.activityInfo.packageName,
+                        photoUri,
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION  // giving permission to allow other activities write to our Uri
+                    )
+                }
+
+                startActivityForResult(captureImage, REQUEST_PHOTO)
+            }
+
         }
 
     }
