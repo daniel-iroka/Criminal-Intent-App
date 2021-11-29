@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- This xml file means "map the root part of our private storage as crime_photos". -->
+
+<paths>
+    <files-path
+        name="crime_photos"
+        path="." />
+</paths>
