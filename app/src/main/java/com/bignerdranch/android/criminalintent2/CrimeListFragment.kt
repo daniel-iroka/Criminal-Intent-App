@@ -151,7 +151,8 @@ class CrimeListFragment : Fragment() {
     // This is a function that connects our adapter to our RecyclerView and populates our UI
     private fun updateUI(crimes: List<Crime>) {
 
-        // We did this because submitList() is a sub-class of ListAdapter
+        // We did this because submitList() is a sub-class of ListAdapter not recyclerView
+        // so we need to cast superType to subType
         (crimeRecyclerView.adapter as CrimeAdapter).submitList(crimes)
     }
 

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.bignerdranch.android.criminalintent2.database.CrimeDatabase
 import com.bignerdranch.android.criminalintent2.database.migration_1_4
+import java.io.File
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -35,7 +36,9 @@ class CrimeRepository private constructor(context: Context) {
 
 
     // An Executor is an Object that references a thread and performs operations on that thread we specify
-    private val executor = Executors.newSingleThreadExecutor()  // this holds reference to "Executors" and defines a "newThread" where we want to perform operations
+    // this below holds reference to "Executors" and defines a "newThread" where we want to perform operations
+    private val executor = Executors.newSingleThreadExecutor()
+    private val filesDir = context.applicationContext.filesDir  // returns a handle(use, interaction) to the directory of a private file
 
 
 
@@ -57,6 +60,9 @@ class CrimeRepository private constructor(context: Context) {
             crimeDao.addCrime(crime)
         }
     }
+
+    // This function provides the full local path to a Crime's Image
+    fun getPhotoFile(crime: Crime): File = File(filesDir, crime.photoFileName)
 
 
 
