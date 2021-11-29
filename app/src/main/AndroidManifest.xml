@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.bignerdranch.android.criminalintent2">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".CriminalIntentApplication"
         android:allowBackup="true"
@@ -18,6 +20,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Giving access for receiving files from other Applications through our Content Provider -->
+
+        <provider
+            android:authorities="com.bignerdranch.android.criminalintent2.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <!-- Providing the files we want our FileProvider to expose to allow other apps read, write to them. -->
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/files" />
+
+        </provider>
+
     </application>
 
 </manifest>
