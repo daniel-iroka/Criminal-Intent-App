@@ -30,7 +30,7 @@ private const val REQUEST_CONTACT = 1
 private const val REQUEST_PHOTO = 2
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
-
+// TODO: WHEN NEXT I come, I will go through the second "getScaledBitmap" function and the proceed to DECLARING FEATURES....
 
 /** FRAGMENT B **/
 
@@ -117,7 +117,6 @@ class CrimeFragment : Fragment()   {
             showDate.show(this@CrimeFragment.childFragmentManager, DIALOG_DATE)
         }
 
-
         return view
 
     }
@@ -156,6 +155,17 @@ class CrimeFragment : Fragment()   {
         if (crime.suspect.isNotEmpty()) {    // Adds the contact(suspect) name to the suspect button
             suspectButton.text = crime.suspect
         }
+        updatePhotoView()
+    }
+
+    // This function is to load our bitmap into our ImageVIew
+    private fun updatePhotoView()  {
+        if (photoFile.exists()) {
+            val bitmap = getScaledBitmap(photoFile.path, requireActivity())
+            photoView.setImageBitmap(bitmap)
+        }  else {
+            photoView.setImageDrawable(null)
+        }
     }
 
 
@@ -185,9 +195,14 @@ class CrimeFragment : Fragment()   {
                     suspectButton.text = suspect
                 }
             }
+            requestCode == REQUEST_PHOTO -> {
+                // This revokes permission to write to our Uri after a valid result has been received
+                requireActivity().revokeUriPermission(photoUri,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                updatePhotoView()
+            }
         }
     }
-
 
 
 
@@ -331,7 +346,6 @@ class CrimeFragment : Fragment()   {
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION  // giving permission to allow other activities write to our Uri
                     )
                 }
-
                 startActivityForResult(captureImage, REQUEST_PHOTO)
             }
 
@@ -345,6 +359,13 @@ class CrimeFragment : Fragment()   {
     override fun onStop() {
         super.onStop()
         crimeDetailViewModel.saveCrime(crime)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        // ensures no invalid response was received since we called it on onDetach()
+        requireActivity().revokeUriPermission(photoUri,
+        Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     }
 
 
