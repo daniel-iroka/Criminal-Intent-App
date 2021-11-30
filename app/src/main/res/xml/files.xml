@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- This is the file we want our FileProvider to expose to other Applications. -->
+
+<paths>
+    <files-path
+        name="crime_photos"
+        path="." />
+</paths>

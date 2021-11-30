@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.Room
 import com.bignerdranch.android.criminalintentChallengeVersion.database.CrimeDatabase
 import com.bignerdranch.android.criminalintentChallengeVersion.database.migration_4_5
+import java.io.File
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -29,6 +30,7 @@ class CrimeRepository private constructor(context: Context) {
     private val crimeDao = database.crimeDao()    // stores references to our DAO objects
 
     private val executor = Executors.newSingleThreadExecutor()
+    private val getFilePath = context.applicationContext.filesDir  // this returns a Handle(use or interaction) to a Path for private files
 
 
 
@@ -53,6 +55,8 @@ class CrimeRepository private constructor(context: Context) {
     }
 
 
+    // This provides the full local path of a private file in our filesystem
+    fun getPhotoFile(crime: Crime): File = File(getFilePath, crime.photoFileName)
 
 
     // This is what makes our entire class a singleton

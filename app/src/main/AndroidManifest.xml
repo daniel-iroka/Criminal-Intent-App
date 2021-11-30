@@ -3,6 +3,7 @@
     package="com.bignerdranch.android.criminalintentChallengeVersion">
 
     <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:name="com.bignerdranch.android.criminalintentChallengeVersion.CriminalIntentApplication"
@@ -20,6 +21,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:authorities="com.bignerdranch.android.criminalintentChallengeVersion.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true" >
+
+            <meta-data
+                android:resource="@xml/files"
+                android:name="android.support.FILE_PROVIDER_PATHS"/>
+
+        </provider>
+
     </application>
 
 </manifest>

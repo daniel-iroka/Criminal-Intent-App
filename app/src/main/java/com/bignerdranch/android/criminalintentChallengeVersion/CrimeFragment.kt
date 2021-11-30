@@ -7,17 +7,18 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
+import android.widget.*
+import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import java.io.File
 import java.util.*
 
 
@@ -30,7 +31,7 @@ private const val ARG_CRIME_ID = "crime_id"
 const val DIALOG_DATE = "DialogDate"
 private const val DIALOG_TIME = "DialogTime"
 private const val REQUEST_CONTACT = 1
-private const val REQUEST_PHONE = 1
+private const val REQUEST_PHOTO = 2
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
 
@@ -41,6 +42,8 @@ private const val DATE_FORMAT = "EEE, MMM, dd"
 class CrimeFragment : Fragment() {
 
     private lateinit var crime :Crime
+    private lateinit var photoFile : File
+    private lateinit var photoUri: Uri
     private lateinit var titleField : EditText
     private lateinit var dateButton : Button
     private lateinit var solvedCheckedBox: CheckBox
@@ -48,6 +51,8 @@ class CrimeFragment : Fragment() {
     private lateinit var reportButton: Button
     private lateinit var suspectButton: Button
     private lateinit var callSuspectButton: Button
+    private lateinit var photoButton: ImageButton
+    private lateinit var photoView: ImageView
 
 
     /**  || MOST FUNCTIONS USED IN FRAGMENTS ARE LIFECYCLE CALL BACK FUNCTIONS USED TO PERSIST THE STATE OF THE UI. such as below ||  **/
@@ -89,8 +94,8 @@ class CrimeFragment : Fragment() {
         reportButton = view.findViewById(R.id.crime_report) as Button
         suspectButton = view.findViewById(R.id.crime_suspect) as Button
         callSuspectButton = view.findViewById(R.id.call_suspect_button) as Button
-
-
+        photoButton = view.findViewById(R.id.crime_camera) as ImageButton
+        photoView = view.findViewById(R.id.crime_photo) as ImageView
 
 
 
@@ -98,8 +103,7 @@ class CrimeFragment : Fragment() {
         dateButton.setOnClickListener {
 
             // This is the replacement of "setTargetFragment". We use this function to connect both fragments together
-            childFragmentManager.setFragmentResultListener("requestKey", viewLifecycleOwner) { Key, bundle ->
-
+            childFragmentManager.setFragmentResultListener("requestKey", viewLifecycleOwner) { _, bundle ->
 
                 val result = bundle.getSerializable("bundleKey") as Date
                 crime.date = result
@@ -107,24 +111,21 @@ class CrimeFragment : Fragment() {
             }
             updateUI()
 
-
             val showDate = DatePickerFragment.newInstance(crime.date)
             showDate.show(this@CrimeFragment.childFragmentManager, DIALOG_DATE)
         }
 
 
-
         // initializing our timePicker Button to enable the user select a particular time for a date
         timePickerButton.setOnClickListener {
 
-            childFragmentManager.setFragmentResultListener("transferKey", viewLifecycleOwner)  { Key, bundle ->
+            childFragmentManager.setFragmentResultListener("transferKey", viewLifecycleOwner)  { _, bundle ->
 
                 val result = bundle.getSerializable("resultKey") as Date
                 crime.time = result
                 updateTime()
             }
             updateTime()
-
 
             val showTime = TimePickerFragment.newInstance(crime.time)
             showTime.show(this@CrimeFragment.childFragmentManager, DIALOG_TIME)
@@ -143,6 +144,9 @@ class CrimeFragment : Fragment() {
             androidx.lifecycle.Observer { crime ->
                 crime?.let {
                     this.crime = crime
+                    photoFile = crimeDetailViewModel.getPhotoFile(crime)
+                    // we use getUriFile to get the Uri of a file that the camera app can recognize
+                    photoUri = FileProvider.getUriForFile(requireActivity(), "com.bignerdranch.android.criminalintentChallengeVersion.fileprovider", photoFile)
                     updateUI()
                     updateTime()
                 }
@@ -333,6 +337,39 @@ class CrimeFragment : Fragment() {
 
             if (resolvedActivity == null)  {   // However, if it doesn't find any, It'll disable the suspect Button
                 isEnabled = false
+            }
+
+
+            // Initializing our photoButton to take pictures of a crime
+            photoButton.apply {
+                val packageManager = requireActivity().packageManager
+
+                // Will check for activities that correspond to the one in our Intent and disable button if none is found
+                val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                val resolvedActivity : ResolveInfo? =
+                    packageManager.resolveActivity(captureImage,
+                    PackageManager.MATCH_DEFAULT_ONLY)
+
+                if (resolvedActivity == null) {
+                    isEnabled = false  // will disable button if no corresponding activity is found
+                }
+
+                setOnClickListener {
+                    captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+
+                    val cameraActivities : List<ResolveInfo> =
+                        packageManager.queryIntentActivities(captureImage,
+                        PackageManager.MATCH_DEFAULT_ONLY)
+
+                    for (cameraActivity in cameraActivities) {
+                        requireActivity().grantUriPermission(
+                            cameraActivity.activityInfo.packageName,
+                            photoUri,
+                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION)  // granting permission to other apps to allow it write Uris to CriminalIntent
+                    }
+                }
+                startActivityForResult(captureImage, REQUEST_PHOTO)
+
             }
 
 
