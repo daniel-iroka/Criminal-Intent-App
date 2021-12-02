@@ -36,7 +36,6 @@ private const val DATE_FORMAT = "EEE, MMM, dd"
 
 
 
-
 // This is our Fragment which we will use to work on our Fragment's view
 // THIS FILE WILL CONTAIN OUR CRIME'S DETAIL
 class CrimeFragment : Fragment() {
@@ -163,6 +162,22 @@ class CrimeFragment : Fragment() {
             isChecked = crime.isSolved
             jumpDrawablesToCurrentState()  // this skips the checkBox animation whenever we load crime
         }
+        // Sends our suspect's name to our Button
+        if (crime.suspect.isNotEmpty()) {
+            suspectButton.text = crime.suspect
+        }
+
+        updatePhotoView()
+    }
+
+    // function to the Bitmap into our ImageView
+    private fun updatePhotoView()  {
+        if (photoFile.exists()) {
+            val bitmap = getScaledBitmap(photoFile.path, requireActivity())
+            photoView.setImageBitmap(bitmap)
+        } else {
+            photoView.setImageDrawable(null)
+        }
     }
 
 
@@ -226,8 +241,10 @@ class CrimeFragment : Fragment() {
 
                 }
 
-
-
+            }
+            requestCode == REQUEST_PHOTO -> {
+                requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                updatePhotoView()
             }
         }
     }
@@ -349,7 +366,6 @@ class CrimeFragment : Fragment() {
                 val resolvedActivity : ResolveInfo? =
                     packageManager.resolveActivity(captureImage,
                     PackageManager.MATCH_DEFAULT_ONLY)
-
                 if (resolvedActivity == null) {
                     isEnabled = false  // will disable button if no corresponding activity is found
                 }
@@ -367,9 +383,16 @@ class CrimeFragment : Fragment() {
                             photoUri,
                             Intent.FLAG_GRANT_WRITE_URI_PERMISSION)  // granting permission to other apps to allow it write Uris to CriminalIntent
                     }
+                    startActivityForResult(captureImage, REQUEST_PHOTO)
                 }
-                startActivityForResult(captureImage, REQUEST_PHOTO)
 
+            }
+
+            // Initializing our PhotoView to display the full sized image of a crime when clicked
+            photoView.setOnClickListener {
+
+                val showImage = ZoomedImageFragment.newInstance(photoFile)
+                showImage.show(childFragmentManager, "Zoomed_Picture")
             }
 
 
@@ -393,6 +416,12 @@ class CrimeFragment : Fragment() {
     override fun onStop() {
         super.onStop()
         crimeDetailViewModel.saveCrime(crime)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        requireActivity().revokeUriPermission(photoUri,
+            Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
     }
 
 

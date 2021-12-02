@@ -19,12 +19,10 @@ class TimePickerFragment: DialogFragment() {
         val timeListener = TimePickerDialog.OnTimeSetListener {
                 _: TimePicker, hour, minute ->
 
-
             val calendar = Calendar.getInstance()
             val year = calendar.get(Calendar.YEAR)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
             val month = calendar.get(Calendar.MONTH)
-
 
             val mainResult = GregorianCalendar(year, day, month, hour, minute).time
 
@@ -33,11 +31,9 @@ class TimePickerFragment: DialogFragment() {
             val result = Bundle().apply {
                 putSerializable("resultKey", mainResult)
             }
-
             parentFragmentManager.setFragmentResult("transferKey", result)
 
         }
-
 
 
         // INITIAL DATE
@@ -49,8 +45,6 @@ class TimePickerFragment: DialogFragment() {
         // Sending the date back to DatePickerFragment
         val time = arguments?.getSerializable(ARG2_DATE) as Date
         cal.time = time
-
-
 
         return TimePickerDialog(
             requireContext(),
