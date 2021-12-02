@@ -351,6 +351,13 @@ class CrimeFragment : Fragment()   {
 
         }
 
+        // Initializing our PhotoView to display the full sized image of a crime when clicked
+        // NOTE: Bonus feature from the challenges section
+        photoView.setOnClickListener {
+            val showImage = ZoomedImageDialogFragment.newInstance(photoFile)
+            showImage.show(childFragmentManager, "ZOOMED_IMAGE")
+        }
+
     }
 
 
