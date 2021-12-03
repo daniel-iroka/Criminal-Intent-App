@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import android.text.format.DateFormat
+import android.view.ViewTreeObserver
 import android.widget.*
 import androidx.core.content.FileProvider
 import java.io.File
@@ -30,7 +31,7 @@ private const val REQUEST_CONTACT = 1
 private const val REQUEST_PHOTO = 2
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
-// TODO: WHEN NEXT I come, I will go through the second "getScaledBitmap" function and the proceed to DECLARING FEATURES....
+// TODO: WHEN NEXT I COME, I WILL MAKE SURE I RE-MODIFY THE CHALLENGE CODE TO MY TASTE MUSSSSSTTTTTT..
 
 /** FRAGMENT B **/
 
@@ -49,25 +50,25 @@ class CrimeFragment : Fragment()   {
     private lateinit var photoButton: ImageButton
     private lateinit var photoView: ImageView
 
+    private var imageViewWidth = 0
+    private var imageViewHeight = 0
+
+
 
     // Providing an instance of CrimeDetailViewModel
     private val crimeDetailViewModel : CrimeDetailViewModel by lazy {
         ViewModelProvider(this).get(CrimeDetailViewModel::class.java)
     }
 
-
     // This initializes our Activity. Sort of our entry point
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
 
-
-
         // This is how we pull or reference our fragments arguments passed from the hosting Activity, which is similar to "intents"
         // We remember that we can only reference a value by its "key" in a key-value pair, so we use ARG_CRIME_ID
         val crimeId : UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         crimeDetailViewModel.loadCrime(crimeId)    // we then connect the loaded crime from our CrimeDetailViewModel to our CrimeFragment
-
     }
 
 
@@ -84,7 +85,6 @@ class CrimeFragment : Fragment()   {
         // added to the View's parent
         val view = inflater.inflate(R.layout.fragment_crime, container, false)
 
-
         // Implementing their view by Id in Fragments
         titleField = view.findViewById(R.id.crime_title) as EditText
         dateButton = view.findViewById(R.id.crime_date) as Button
@@ -93,8 +93,6 @@ class CrimeFragment : Fragment()   {
         suspectButton = view.findViewById(R.id.crime_suspect) as Button
         photoButton = view.findViewById(R.id.crime_camera) as ImageButton
         photoView = view.findViewById(R.id.crime_photo) as ImageView
-
-
 
 
         // implementing the Date Button
@@ -116,9 +114,7 @@ class CrimeFragment : Fragment()   {
             val showDate = DatePickerFragment.newInstance(crime.date)
             showDate.show(this@CrimeFragment.childFragmentManager, DIALOG_DATE)
         }
-
         return view
-
     }
 
 
@@ -142,7 +138,6 @@ class CrimeFragment : Fragment()   {
     }
 
 
-
     // the function to populate our UI
     private fun updateUI() {
         titleField.setText(crime.title)
@@ -161,7 +156,7 @@ class CrimeFragment : Fragment()   {
     // This function is to load our bitmap into our ImageVIew
     private fun updatePhotoView()  {
         if (photoFile.exists()) {
-            val bitmap = getScaledBitmap(photoFile.path, requireActivity())
+            val bitmap = getScaledBitmap(photoFile.path, imageViewWidth, imageViewHeight)
             photoView.setImageBitmap(bitmap)
         }  else {
             photoView.setImageDrawable(null)
@@ -205,7 +200,6 @@ class CrimeFragment : Fragment()   {
     }
 
 
-
     // This function here is being used to replace the details of a crime at run time using string formatting
     // Because we can't get the details of our crime at runtime, so this is kind of like a dummy data
     private fun getCrimeReport(): String {
@@ -231,7 +225,6 @@ class CrimeFragment : Fragment()   {
     // Listener for the EditText and other button
     override fun onStart() {
         super.onStart()
-
 
         // TextWatcher class is used to monitor or watch user input text fields and update date on it or other things at the same time
         val titleWatcher = object : TextWatcher {
@@ -272,7 +265,6 @@ class CrimeFragment : Fragment()   {
         }
 
 
-
         // Initializing our reportButton to be able to send a crime report to another activity with the help of Intents
         reportButton.setOnClickListener {
 
@@ -291,7 +283,6 @@ class CrimeFragment : Fragment()   {
                 startActivity(chooserIntent)
             }
         }
-
 
 
         // Initializing our suspect button to be able to choose a suspect from our contacts list
@@ -356,6 +347,14 @@ class CrimeFragment : Fragment()   {
         photoView.setOnClickListener {
             val showImage = ZoomedImageDialogFragment.newInstance(photoFile)
             showImage.show(childFragmentManager, "ZOOMED_IMAGE")
+        }
+
+        // Getting to know the size of the image before a layout pass happens
+        photoView.apply {
+            viewTreeObserver.addOnGlobalLayoutListener {
+                imageViewWidth = width
+                imageViewHeight = height
+            }
         }
 
     }
