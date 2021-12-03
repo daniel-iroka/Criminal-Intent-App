@@ -14,6 +14,7 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -23,8 +24,6 @@ import java.util.*
 
 
 /** THIS IS THE CHALLENGE VERSION OF CRIMINAL INTENT **/
-
-
 
 
 private const val ARG_CRIME_ID = "crime_id"
@@ -53,6 +52,10 @@ class CrimeFragment : Fragment() {
     private lateinit var photoButton: ImageButton
     private lateinit var photoView: ImageView
 
+    private lateinit var imageTreeObserver : ViewTreeObserver
+    private var imageViewWidth = 0
+    private var imageViewHeight = 0
+
 
     /**  || MOST FUNCTIONS USED IN FRAGMENTS ARE LIFECYCLE CALL BACK FUNCTIONS USED TO PERSIST THE STATE OF THE UI. such as below ||  **/
 
@@ -61,17 +64,14 @@ class CrimeFragment : Fragment() {
         ViewModelProvider(this).get(CrimeDetailViewModel::class.java)
     }
 
-
     // This initializes our Activity. Sort of our entry point
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         crime = Crime()
 
-
         val crimeId : UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         crimeDetailViewModel.loadCrime(crimeId)
     }
-
 
 
     override fun onCreateView(
@@ -95,7 +95,6 @@ class CrimeFragment : Fragment() {
         callSuspectButton = view.findViewById(R.id.call_suspect_button) as Button
         photoButton = view.findViewById(R.id.crime_camera) as ImageButton
         photoView = view.findViewById(R.id.crime_photo) as ImageView
-
 
 
         // implementing the Date Button
@@ -130,10 +129,16 @@ class CrimeFragment : Fragment() {
             showTime.show(this@CrimeFragment.childFragmentManager, DIALOG_TIME)
         }
 
+        // Knowing the size of the Image before a layout pass
+        imageTreeObserver = photoView.viewTreeObserver
+        imageTreeObserver.addOnGlobalLayoutListener {
+            imageViewWidth = photoView.width
+            imageViewHeight = photoView.height
+        }
+
 
         return view
     }
-
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -167,13 +172,13 @@ class CrimeFragment : Fragment() {
             suspectButton.text = crime.suspect
         }
 
-        updatePhotoView()
+        updatePhotoView(imageViewWidth, imageViewHeight)
     }
 
     // function to the Bitmap into our ImageView
-    private fun updatePhotoView()  {
+    private fun updatePhotoView(width: Int, height:Int)  {
         if (photoFile.exists()) {
-            val bitmap = getScaledBitmap(photoFile.path, requireActivity())
+            val bitmap = getScaledBitmap(photoFile.path, width, height)
             photoView.setImageBitmap(bitmap)
         } else {
             photoView.setImageDrawable(null)
@@ -238,17 +243,15 @@ class CrimeFragment : Fragment() {
 
                     }
                     crimeDetailViewModel.saveCrime(crime)
-
                 }
 
             }
             requestCode == REQUEST_PHOTO -> {
                 requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                updatePhotoView()
+                updatePhotoView(imageViewWidth, imageViewHeight)
             }
         }
     }
-
 
 
     // These are the crime's details we reference through their string resource, since we can't obtain them in runtime
@@ -270,12 +273,10 @@ class CrimeFragment : Fragment() {
     }
 
 
-
     // function to updateTime on a crime wherever it is called
     private fun updateTime() {
         timePickerButton.text = DateFormat.format("HH:mm", crime.time)
     }
-
 
 
     // Listener for the EditText and other button
@@ -394,7 +395,6 @@ class CrimeFragment : Fragment() {
                 val showImage = ZoomedImageFragment.newInstance(photoFile)
                 showImage.show(childFragmentManager, "Zoomed_Picture")
             }
-
 
         }
 
