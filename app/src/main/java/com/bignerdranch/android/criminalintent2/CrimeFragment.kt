@@ -16,7 +16,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import android.text.format.DateFormat
-import android.view.ViewTreeObserver
 import android.widget.*
 import androidx.core.content.FileProvider
 import java.io.File
@@ -31,7 +30,7 @@ private const val REQUEST_CONTACT = 1
 private const val REQUEST_PHOTO = 2
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
-// TODO: WHEN NEXT I COME, I WILL MAKE SURE I RE-MODIFY THE CHALLENGE CODE TO MY TASTE MUSSSSSTTTTTT..
+// TODO: LATER, I WILL MAKE SURE I WILL UPDATE THE CHALLENGE VERSION WITH THE CORRECT SOLUTION
 
 /** FRAGMENT B **/
 
