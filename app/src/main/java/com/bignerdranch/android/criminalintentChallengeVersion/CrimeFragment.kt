@@ -14,7 +14,6 @@ import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
 import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
@@ -51,8 +50,6 @@ class CrimeFragment : Fragment() {
     private lateinit var callSuspectButton: Button
     private lateinit var photoButton: ImageButton
     private lateinit var photoView: ImageView
-
-    private lateinit var imageTreeObserver : ViewTreeObserver
     private var imageViewWidth = 0
     private var imageViewHeight = 0
 
@@ -83,7 +80,6 @@ class CrimeFragment : Fragment() {
         // The first parameter is the View's ID, second is the View's parent and third is if the inflated view will be immediately
         // added to the View's parent
         val view = inflater.inflate(R.layout.fragment_crime, container, false)
-
 
         // Implementing their view by Id in Fragments
         titleField = view.findViewById(R.id.crime_title) as EditText
@@ -128,15 +124,6 @@ class CrimeFragment : Fragment() {
             val showTime = TimePickerFragment.newInstance(crime.time)
             showTime.show(this@CrimeFragment.childFragmentManager, DIALOG_TIME)
         }
-
-        // Knowing the size of the Image before a layout pass
-        imageTreeObserver = photoView.viewTreeObserver
-        imageTreeObserver.addOnGlobalLayoutListener {
-            imageViewWidth = photoView.width
-            imageViewHeight = photoView.height
-        }
-
-
         return view
     }
 
@@ -172,13 +159,13 @@ class CrimeFragment : Fragment() {
             suspectButton.text = crime.suspect
         }
 
-        updatePhotoView(imageViewWidth, imageViewHeight)
+        updatePhotoView()
     }
 
     // function to the Bitmap into our ImageView
-    private fun updatePhotoView(width: Int, height:Int)  {
+    private fun updatePhotoView()  {
         if (photoFile.exists()) {
-            val bitmap = getScaledBitmap(photoFile.path, width, height)
+            val bitmap = getScaledBitmap(photoFile.path, imageViewWidth, imageViewHeight)
             photoView.setImageBitmap(bitmap)
         } else {
             photoView.setImageDrawable(null)
@@ -240,7 +227,6 @@ class CrimeFragment : Fragment() {
                         cursorPhone.moveToFirst()
                         val phoneNumberValue = cursorPhone.getString(0)
                         crime.phoneNumber = phoneNumberValue  // passed our phone NUmber to our property
-
                     }
                     crimeDetailViewModel.saveCrime(crime)
                 }
@@ -248,7 +234,7 @@ class CrimeFragment : Fragment() {
             }
             requestCode == REQUEST_PHOTO -> {
                 requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                updatePhotoView(imageViewWidth, imageViewHeight)
+                updatePhotoView()
             }
         }
     }
@@ -283,7 +269,6 @@ class CrimeFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-
         // TextWatcher class is used to monitor or watch user input text fields and update date on it or other things at the same time
         val titleWatcher = object : TextWatcher {
 
@@ -311,7 +296,6 @@ class CrimeFragment : Fragment() {
 
         // This updates the title field with the title the User inputs as an EdiText
         titleField.addTextChangedListener(titleWatcher)
-
 
 
         // I honestly don't understand what this does
@@ -345,7 +329,6 @@ class CrimeFragment : Fragment() {
                 startActivityForResult(pickContactIntent, REQUEST_CONTACT)
             }
 
-
             // This code in general searches for a contacts app that matches the one in our given Intent and retrieves info
             // on it.
             val packageManager : PackageManager = requireActivity().packageManager
@@ -356,48 +339,51 @@ class CrimeFragment : Fragment() {
             if (resolvedActivity == null)  {   // However, if it doesn't find any, It'll disable the suspect Button
                 isEnabled = false
             }
-
-
-            // Initializing our photoButton to take pictures of a crime
-            photoButton.apply {
-                val packageManager = requireActivity().packageManager
-
-                // Will check for activities that correspond to the one in our Intent and disable button if none is found
-                val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                val resolvedActivity : ResolveInfo? =
-                    packageManager.resolveActivity(captureImage,
-                    PackageManager.MATCH_DEFAULT_ONLY)
-                if (resolvedActivity == null) {
-                    isEnabled = false  // will disable button if no corresponding activity is found
-                }
-
-                setOnClickListener {
-                    captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-
-                    val cameraActivities : List<ResolveInfo> =
-                        packageManager.queryIntentActivities(captureImage,
-                        PackageManager.MATCH_DEFAULT_ONLY)
-
-                    for (cameraActivity in cameraActivities) {
-                        requireActivity().grantUriPermission(
-                            cameraActivity.activityInfo.packageName,
-                            photoUri,
-                            Intent.FLAG_GRANT_WRITE_URI_PERMISSION)  // granting permission to other apps to allow it write Uris to CriminalIntent
-                    }
-                    startActivityForResult(captureImage, REQUEST_PHOTO)
-                }
-
-            }
-
-            // Initializing our PhotoView to display the full sized image of a crime when clicked
-            photoView.setOnClickListener {
-
-                val showImage = ZoomedImageFragment.newInstance(photoFile)
-                showImage.show(childFragmentManager, "Zoomed_Picture")
-            }
-
         }
 
+        // Initializing our photoButton to take pictures of a crime
+        photoButton.apply {
+            val packageManager = requireActivity().packageManager
+
+            // Will check for activities that correspond to the one in our Intent and disable button if none is found
+            val captureImage = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            val resolvedActivity : ResolveInfo? =
+                packageManager.resolveActivity(captureImage,
+                    PackageManager.MATCH_DEFAULT_ONLY)
+            if (resolvedActivity == null) {
+                isEnabled = false  // will disable button if no corresponding activity is found
+            }
+
+            setOnClickListener {
+                captureImage.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
+
+                val cameraActivities : List<ResolveInfo> =
+                    packageManager.queryIntentActivities(captureImage,
+                        PackageManager.MATCH_DEFAULT_ONLY)
+
+                for (cameraActivity in cameraActivities) {
+                    requireActivity().grantUriPermission(
+                        cameraActivity.activityInfo.packageName,
+                        photoUri,
+                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION)  // granting permission to other apps to allow it write Uris to CriminalIntent
+                }
+                startActivityForResult(captureImage, REQUEST_PHOTO)
+            }
+        }
+
+        // Initializing our PhotoView to display the full sized image of a crime when clicked
+        photoView.setOnClickListener {
+            val showImage = ZoomedImageFragment.newInstance(photoFile)
+            showImage.show(childFragmentManager, "Zoomed_Picture")
+        }
+
+        // Knowing the size of our View before a layout pass happens
+        photoView.apply {
+            viewTreeObserver.addOnGlobalLayoutListener {
+                imageViewWidth = width
+                imageViewHeight = height
+            }
+        }
 
         // Initializing our callSuspect Button
         callSuspectButton.setOnClickListener {
@@ -407,9 +393,7 @@ class CrimeFragment : Fragment() {
                 data = Uri.parse("tel:$phone")
             }
             startActivity(callerIntent)
-
         }
-
     }
 
 
