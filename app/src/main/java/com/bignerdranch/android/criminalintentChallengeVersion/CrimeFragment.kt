@@ -33,6 +33,8 @@ private const val REQUEST_PHOTO = 2
 private const val DATE_FORMAT = "EEE, MMM, dd"
 
 
+// TODO: FIND THE SPANISH INTERPRETATIONS OF THE UNDERLINED STRING RESOURCE ERRORS.....
+
 
 // This is our Fragment which we will use to work on our Fragment's view
 // THIS FILE WILL CONTAIN OUR CRIME'S DETAIL
