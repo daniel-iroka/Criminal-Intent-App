@@ -58,7 +58,6 @@ class CrimeFragment : Fragment() {
 
     /**  || MOST FUNCTIONS USED IN FRAGMENTS ARE LIFECYCLE CALL BACK FUNCTIONS USED TO PERSIST THE STATE OF THE UI. such as below ||  **/
 
-
     private val crimeDetailViewModel : CrimeDetailViewModel by lazy {
         ViewModelProvider(this).get(CrimeDetailViewModel::class.java)
     }
@@ -71,7 +70,6 @@ class CrimeFragment : Fragment() {
         val crimeId : UUID = arguments?.getSerializable(ARG_CRIME_ID) as UUID
         crimeDetailViewModel.loadCrime(crimeId)
     }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -250,13 +248,13 @@ class CrimeFragment : Fragment() {
             getString(R.string.crime_report_unsolved)
         }
 
-        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
+        val dateLocale = DateFormat.getBestDateTimePattern(Locale.FRANCE, DATE_FORMAT)
+        val dateString = dateLocale.format(DATE_FORMAT, crime.date)
         val suspect = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
         } else {
             getString(R.string.crime_report_suspect, crime.suspect)
         }
-
         return getString(R.string.crime_report, crime.title, dateString, solvedString, suspect)
     }
 
@@ -306,7 +304,6 @@ class CrimeFragment : Fragment() {
                 crime.isSolved = isChecked
             }
         }
-
 
         // Initializing our report button to allow the User send a current crime report to another Activity through intents
         reportButton.setOnClickListener {

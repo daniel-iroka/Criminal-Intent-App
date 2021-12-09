@@ -20,11 +20,7 @@ import java.util.*
 
 private const val TAG = "CrimeListFragment"
 
-
-
 /** THIS IS THE CHALLENGE VERSION OF CRIMINAL INTENT **/
-
-
 
 
 // THIS FILE WILL BE THE FRAGMENT TO DISPLAY OUR CRIME LIST
@@ -37,13 +33,10 @@ class CrimeListFragment : Fragment() {
     }
 
     private var callbacks: CallBacks? = null  // A property holding reference to our CallBacks
-
-
     private lateinit var crimeRecyclerView : RecyclerView
     private var adapter : CrimeAdapter? = CrimeAdapter()
     private lateinit var addCrimeButton : Button
     private lateinit var addCrimeText : TextView
-
 
 
     // We set a ViewModelProvider to provide and instance of CrimeListViewModel and return it whenever the OS requests for a new one.
@@ -51,13 +44,10 @@ class CrimeListFragment : Fragment() {
         ViewModelProvider(this).get(CrimeListViewModel::class.java)
     }
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)  // We are explicitly telling our fragmentManager that CrimeListFragment needs to receive a call from onCreateOptions....
     }
-
 
 
     // This function sets our callbacks property and is called
@@ -66,8 +56,6 @@ class CrimeListFragment : Fragment() {
         super.onAttach(context)
         callbacks = context as CallBacks?
     }
-
-
 
 
     // We call this callback function from our Activity to inflate our
@@ -82,8 +70,6 @@ class CrimeListFragment : Fragment() {
     // We then describe what we want to happen when it is selected which is to add a new crime
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-
         return when(item.itemId) {
             R.id.new_crime -> {
                 val crime = Crime()
@@ -96,7 +82,6 @@ class CrimeListFragment : Fragment() {
     }
 
 
-
     // This inflates the layout, setting up all the views
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -105,7 +90,6 @@ class CrimeListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
 
-
         //  finding views by their IDs
         crimeRecyclerView = view.findViewById(R.id.crime_recycler_view) as RecyclerView
 
@@ -113,22 +97,15 @@ class CrimeListFragment : Fragment() {
         // A recycler view needs a LayoutManger to work. It is used to position items on the screen itself
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
         crimeRecyclerView.adapter = adapter
-
-
         addCrimeButton = view.findViewById(R.id.add_crime_button) as Button
         addCrimeText = view.findViewById(R.id.add_crime_text) as TextView
 
-
         // initializing our add crime Button
         addCrimeButton.setOnClickListener {
-
             val crime = Crime()
             crimeListViewModel.addCrime(crime)
             callbacks?.onCrimeSelected(crime.id)
-
-
         }
-
         return view
     }
 
@@ -148,13 +125,10 @@ class CrimeListFragment : Fragment() {
         )
     }
 
-
     override fun onDetach() {
         super.onDetach()
         callbacks = null
     }
-
-
 
     /** Challenge 6 - An Empty View for the RecyclerView **/
 
@@ -165,8 +139,6 @@ class CrimeListFragment : Fragment() {
         } else {
             (crimeRecyclerView.adapter as CrimeAdapter).submitList(crimes)
         }
-
-
         // Making the textView also disappear
         addCrimeText.visibility = if (crimes.isEmpty()) View.VISIBLE else View.GONE
 
@@ -176,9 +148,7 @@ class CrimeListFragment : Fragment() {
     // A Generic ViewHolder to be implemented by other ViewHolders
     abstract class BaseViewHolder<T>(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
-
         abstract fun bind(crime: Crime)
-
     }
 
 
@@ -188,28 +158,22 @@ class CrimeListFragment : Fragment() {
         : BaseViewHolder<Crime>(view), View.OnClickListener {
 
         private lateinit var crime : Crime
-
         private val titleTextView : TextView = itemView.findViewById(R.id.crime_title)
         private val dateTextView : TextView = itemView.findViewById(R.id.crime_date)
         private val solvedImageView : ImageView = itemView.findViewById(R.id.crime_solved)
         private val timeTextView : TextView = itemView.findViewById(R.id.time_textView)
-
-
-
 
         init {
             itemView.setOnClickListener(this)
         }
 
 
-
         // This function is added here so that our ViewHolder will do the binding work of the crimes instead of our TextViews(it is a good practice)
         override fun bind(crime: Crime) {
-
             /** CHALLENGE 2 : FORMATTING THE DATE - Using string.formatting, use the functions in the DateFormat class to change the format of the date. **/
             this.crime = crime
             titleTextView.text = this.crime.title
-            dateTextView.text = DateFormat.format("EEEE, MMM dd, yyyy.", this.crime.date)
+            dateTextView.text = DateFormat.format("EEEE, MMM dd, yyyy.", this.crime.date) // Challenge: Localizing Dates was done in main version
             timeTextView.text = DateFormat.format("HH:mm", crime.time)
 
             solvedImageView.visibility = if (crime.isSolved) {
@@ -217,14 +181,11 @@ class CrimeListFragment : Fragment() {
             } else {
                 View.GONE
             }
-
         }
-
 
         override fun onClick(v: View) {
             callbacks?.onCrimeSelected(crime.id)
         }
-
     }
 
 
@@ -238,16 +199,12 @@ class CrimeListFragment : Fragment() {
 
             private val buttonTextView : Button = itemView.findViewById(R.id.contact_police_button)
 
-
         override fun bind(crime: Crime) {
-
-
             buttonTextView.apply {
                 text = crime.contactPolice
             }
         }
     } **/
-
 
     // RecyclerView.Adapter<BaseViewHolder<*>>()
 
@@ -257,7 +214,6 @@ class CrimeListFragment : Fragment() {
 
         val firstViewType = 0
         val secondViewType = 1
-
 
         // This wraps up the inflated recyclerView layout and passes to the CrimeHolder creating a new ViewHolder
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseViewHolder<*> {
@@ -275,9 +231,7 @@ class CrimeListFragment : Fragment() {
                     layoutInflater.inflate(R.layout.list_item_crime, parent, false)
                 )
             } **/
-
         }
-
 
 
         // Retrieves a viewType
@@ -285,15 +239,12 @@ class CrimeListFragment : Fragment() {
         /**override fun getItemViewType(position: Int): Int {
             val crime = crimes[position]
             return crime.requiresPolice(crime)
-
         } **/
 
         // This obtains crimes from a particular position from the crime list and passes it to the CrimeHolder
         override fun onBindViewHolder(holder: BaseViewHolder<*>, position: Int) {
             holder.bind(getItem(position))
         }
-
-
     }
 
 
