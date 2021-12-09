@@ -18,11 +18,9 @@ import java.util.*
 private const val TAG = "CrimeListFragment"
 
 
-
 // This is the fragment to display our crime list objects
 // THIS FILE WILL BE THE FRAGMENT TO DISPLAY OUR CRIME LIST
 class CrimeListFragment : Fragment() {
-
 
     /**
      * Required interface for hosting activities
@@ -33,20 +31,15 @@ class CrimeListFragment : Fragment() {
         fun onCrimeSelected(crimeId: UUID)
     }
 
-
     // This is our callbacks property that implements CallBacks?
     private var callbacks: Callbacks? = null
-
-
     private lateinit var crimeRecyclerView : RecyclerView
     private var adapter : CrimeAdapter? = CrimeAdapter()
-
 
     // We set a ViewModelProvider to provide and instance of CrimeListViewModel and return it whenever the OS requests for a new one.
     private val crimeListViewModel: CrimeListViewModel by lazy {
         ViewModelProvider(this).get(CrimeListViewModel::class.java)
     }
-    
 
 
     // This function sets the callbacks property
@@ -57,12 +50,10 @@ class CrimeListFragment : Fragment() {
         callbacks = context as Callbacks?
     }
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)  // this "explicitly" tells our FragmentManager that our fragment needs to receive a call to menu(onCreateOptionsMenu)
     }
-
 
 
     // This inflates the layout, setting up all the views
@@ -73,7 +64,6 @@ class CrimeListFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_crime_list, container, false)
 
-
         //  finding views by their IDs
         crimeRecyclerView = view.findViewById(R.id.crime_recycler_view) as RecyclerView
 
@@ -81,8 +71,6 @@ class CrimeListFragment : Fragment() {
         // The linearLayoutManager will position the items in the list vertically
         crimeRecyclerView.layoutManager = LinearLayoutManager(context)
         crimeRecyclerView.adapter = adapter
-
-
         return view
     }
 
@@ -104,15 +92,12 @@ class CrimeListFragment : Fragment() {
     }
 
 
-
     // This function unsets our callbacks property. Its is a lifecycle function
     // This sets the property to null meaning that our Activity is no longer Accessible
     override fun onDetach() {
         super.onDetach()
         callbacks = null
     }
-
-
 
 
     // This is the callBacks function used to inflate our menu resource layout file in our CrimeListFragment
@@ -125,7 +110,6 @@ class CrimeListFragment : Fragment() {
 
 
     /** NOTE : clicking on our action_item triggers the detailPart through our callBacks interface **/
-
 
     // This function is called when an action Item is clicked in an activity or fragment. It then matches our action_item id with the menuItem id
     // and of course the menuItem id is the id defined in our menu file
@@ -146,16 +130,12 @@ class CrimeListFragment : Fragment() {
     }
 
 
-
-
     // This is a function that connects our adapter to our RecyclerView and populates our UI
     private fun updateUI(crimes: List<Crime>) {
-
         // We did this because submitList() is a sub-class of ListAdapter not recyclerView
         // so we need to cast superType to subType
         (crimeRecyclerView.adapter as CrimeAdapter).submitList(crimes)
     }
-
 
 
     // This class is where we wire up views in our item list with a ViewHolder
@@ -164,12 +144,9 @@ class CrimeListFragment : Fragment() {
         : RecyclerView.ViewHolder(view), View.OnClickListener {
 
         private lateinit var crime : Crime
-
             private val titleTextView : TextView = itemView.findViewById(R.id.crime_title)
             private val dateTextView : TextView = itemView.findViewById(R.id.crime_date)
             private val solvedImageView : ImageView = itemView.findViewById(R.id.crime_solved)
-
-
 
         // We set an onClickListener on each crime represented by their itemViews
         // The itemView is the view for the entire row
@@ -178,15 +155,12 @@ class CrimeListFragment : Fragment() {
         }
 
 
-
         // This function is added here so that our ViewHolder will do the binding work of the crimes instead of our TextViews(it is a good practice)
         // Because the Adapter should know as little as possible the details of the ViewHolder
         fun bind(crime: Crime) {
             this.crime = crime
             titleTextView.text = this.crime.title
             dateTextView.text = this.crime.date.toString()
-
-
 
             // This code here determines the visibility of the ImageView based on an "if" else statement
             // If crime.isSolved == true, show visibility, else, don't show View.GONE
@@ -203,12 +177,10 @@ class CrimeListFragment : Fragment() {
         override fun onClick(v: View) {
             callbacks?.onCrimeSelected(crime.id)
         }
-
         }
 
 
     /** || IMPORTANT NOTE : The "RecyclerView" does not set data by itself, rather it calls in the Adapter to do it. So  **/
-
 
 
     // A recyclerView does not create or hold ViewHolders by itself, rather it asks an "Adapter" to do so
@@ -216,24 +188,19 @@ class CrimeListFragment : Fragment() {
     private inner class CrimeAdapter
         : ListAdapter<Crime, CrimeHolder>(CrimeDiffCallBack) {
 
-
         // This wraps up the inflated recyclerView layout and passes to  the CrimeHolder creating a new ViewHolder
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
             return CrimeHolder(view)
         }
 
-
 //        No need for this because ListAdapter now handles the list of crimes
 //        override fun getItemCount() = crimes.size   // This reveals the number of items in the list of crimes
-
 
         // This obtains crimes from a particular position from the crime list and passes it to the CrimeHolder
         override fun onBindViewHolder(holder: CrimeHolder, position: Int) {
             holder.bind(getItem(position))    // passes a particular crime according to its position
         }
-
-
     }
 
 
@@ -247,7 +214,6 @@ class CrimeListFragment : Fragment() {
         override fun areContentsTheSame(oldItem: Crime, newItem: Crime): Boolean {
             return oldItem.id == newItem.id
         }
-
     }
 
 

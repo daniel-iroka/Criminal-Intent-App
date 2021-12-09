@@ -37,7 +37,6 @@ private const val DATE_FORMAT = "EEE, MMM, dd"
 
 class CrimeFragment : Fragment()   {
 
-
     private lateinit var crime :Crime // this crime property represents the USER'S EDITS i.e the crime the USER wrote
     private lateinit var photoFile: File
     private lateinit var photoUri: Uri
@@ -48,10 +47,8 @@ class CrimeFragment : Fragment()   {
     private lateinit var suspectButton: Button
     private lateinit var photoButton: ImageButton
     private lateinit var photoView: ImageView
-
     private var imageViewWidth = 0
     private var imageViewHeight = 0
-
 
 
     // Providing an instance of CrimeDetailViewModel
@@ -93,7 +90,6 @@ class CrimeFragment : Fragment()   {
         photoButton = view.findViewById(R.id.crime_camera) as ImageButton
         photoView = view.findViewById(R.id.crime_photo) as ImageView
 
-
         // implementing the Date Button
         dateButton.setOnClickListener {
 
@@ -115,7 +111,6 @@ class CrimeFragment : Fragment()   {
         }
         return view
     }
-
 
 
     // Here we have set a lifecycle Observer to notify us when a crime has been retrieved from our database
@@ -208,17 +203,15 @@ class CrimeFragment : Fragment()   {
             getString(R.string.crime_report_unsolved)
         }
 
-        val dateString = DateFormat.format(DATE_FORMAT, crime.date).toString()
-
+        val dateLocale = DateFormat.getBestDateTimePattern(Locale.FRANCE, DATE_FORMAT)
+        val dateString = dateLocale.format(DATE_FORMAT, crime.date)
         val suspect = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
         } else {
             getString(R.string.crime_report_suspect, crime.suspect)
         }
-
         return getString(R.string.crime_report, crime.title, dateString, solvedString, suspect)
     }
-
 
 
     // Listener for the EditText and other button
@@ -253,7 +246,6 @@ class CrimeFragment : Fragment()   {
 
         // This updates the title field with the title the User inputs as an EdiText
         titleField.addTextChangedListener(titleWatcher)
-
 
         // this code is for our checkBox and makes it checkable just as how an OnClickListener makes a
         // button clickable
@@ -355,7 +347,6 @@ class CrimeFragment : Fragment()   {
                 imageViewHeight = height
             }
         }
-
     }
 
 
