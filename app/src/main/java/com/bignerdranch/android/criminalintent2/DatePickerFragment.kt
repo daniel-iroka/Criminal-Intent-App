@@ -7,7 +7,6 @@ import android.widget.DatePicker
 import androidx.fragment.app.DialogFragment
 import java.util.*
 
-
 // This is our DatePickerFragment in which we will implement our DatePickerDialog inside and will be hosted by our Hosting Activity
 
 private const val ARG_DATE = "date"
@@ -36,7 +35,7 @@ class DatePickerFragment: DialogFragment() {
         //  We also remember that we can only access a value(date) through its key
         val date = arguments?.getSerializable(ARG_DATE) as Date
 
-        val calendar = Calendar.getInstance(Locale.FRANCE)
+        val calendar = Calendar.getInstance()
         calendar.time = date // getting our dates from the "Calendar" object
 
         val initialYear = calendar.get(Calendar.YEAR)

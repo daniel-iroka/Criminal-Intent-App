@@ -19,6 +19,7 @@ import android.text.format.DateFormat
 import android.widget.*
 import androidx.core.content.FileProvider
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
 
 // This is our Fragment which we will use to work on our Fragment's view
@@ -33,7 +34,6 @@ private const val DATE_FORMAT = "EEE, MMM, dd"
 // TODO: LATER, I WILL MAKE SURE I WILL UPDATE THE CHALLENGE VERSION WITH THE CORRECT SOLUTION
 
 /** FRAGMENT B **/
-
 
 class CrimeFragment : Fragment()   {
 
@@ -134,8 +134,10 @@ class CrimeFragment : Fragment()   {
 
     // the function to populate our UI
     private fun updateUI() {
+        // BONUS FEATURE - will format the date according to the device's locale
+        val dateLocales = SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault())
         titleField.setText(crime.title)
-        dateButton.text = crime.date.toString()
+        dateButton.text = dateLocales.format(crime.date)
         solvedCheckedBox.apply {
             isChecked = crime.isSolved
             jumpDrawablesToCurrentState()  // this skips the checkBox animation whenever we load crime
@@ -203,8 +205,7 @@ class CrimeFragment : Fragment()   {
             getString(R.string.crime_report_unsolved)
         }
 
-        val dateLocale = DateFormat.getBestDateTimePattern(Locale.FRANCE, DATE_FORMAT)
-        val dateString = dateLocale.format(DATE_FORMAT, crime.date)
+        val dateString = DateFormat.format(DATE_FORMAT, crime.date)
         val suspect = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
         } else {
@@ -283,7 +284,6 @@ class CrimeFragment : Fragment()   {
             setOnClickListener {
                 startActivityForResult(pickerContactIntent, REQUEST_CONTACT)
             }
-
 
             // This code was added here because most Users may not have a contacts app
             // and disables the Button if none is found
@@ -378,7 +378,5 @@ class CrimeFragment : Fragment()   {
             }
         }
     }
-
-
 }
 

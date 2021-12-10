@@ -2,6 +2,7 @@ package com.bignerdranch.android.criminalintent2
 
 import android.content.Context
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
@@ -13,9 +14,12 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.text.MessageFormat.format
+import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG = "CrimeListFragment"
+const val DEFAULT_DATE_FORMAT = "EEE, d MMM yyyy HH:mm:ss Z"
 
 
 // This is the fragment to display our crime list objects
@@ -158,9 +162,11 @@ class CrimeListFragment : Fragment() {
         // This function is added here so that our ViewHolder will do the binding work of the crimes instead of our TextViews(it is a good practice)
         // Because the Adapter should know as little as possible the details of the ViewHolder
         fun bind(crime: Crime) {
+            // BONUS FEATURE - will format the date according to the device's locale
+            val dateLocales = SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault())
             this.crime = crime
             titleTextView.text = this.crime.title
-            dateTextView.text = this.crime.date.toString()
+            dateTextView.text = dateLocales.format(this.crime.date)
 
             // This code here determines the visibility of the ImageView based on an "if" else statement
             // If crime.isSolved == true, show visibility, else, don't show View.GONE
