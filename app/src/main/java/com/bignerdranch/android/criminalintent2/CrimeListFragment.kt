@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.ListAdapter
 import androidx.lifecycle.Observer
@@ -14,7 +15,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import java.text.MessageFormat.format
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -168,6 +168,14 @@ class CrimeListFragment : Fragment() {
             titleTextView.text = this.crime.title
             dateTextView.text = dateLocales.format(this.crime.date)
 
+            val isSolved = "The case is solved."
+            if (solvedImageView.isVisible) {
+                itemView.contentDescription = getString(R.string.crime_brief_summary, crime.title, dateTextView.text, isSolved)
+            } else {
+                itemView.contentDescription = getString(R.string.crime_summary, crime.title, dateTextView.text)
+            }
+
+
             // This code here determines the visibility of the ImageView based on an "if" else statement
             // If crime.isSolved == true, show visibility, else, don't show View.GONE
             solvedImageView.visibility = if (crime.isSolved) {
@@ -186,7 +194,7 @@ class CrimeListFragment : Fragment() {
         }
 
 
-    /** || IMPORTANT NOTE : The "RecyclerView" does not set data by itself, rather it calls in the Adapter to do it. So  **/
+    /** || IMPORTANT NOTE : The "RecyclerView" does not set data by itself, rather it calls in the Adapter to do it. **/
 
 
     // A recyclerView does not create or hold ViewHolders by itself, rather it asks an "Adapter" to do so
@@ -194,7 +202,7 @@ class CrimeListFragment : Fragment() {
     private inner class CrimeAdapter
         : ListAdapter<Crime, CrimeHolder>(CrimeDiffCallBack) {
 
-        // This wraps up the inflated recyclerView layout and passes to  the CrimeHolder creating a new ViewHolder
+        // This wraps up the inflated recyclerView layout and passes it to the CrimeHolder creating a new ViewHolder
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CrimeHolder {
             val view = layoutInflater.inflate(R.layout.list_item_crime, parent, false)
             return CrimeHolder(view)

@@ -332,7 +332,6 @@ class CrimeFragment : Fragment()   {
                 }
                 startActivityForResult(captureImage, REQUEST_PHOTO)
             }
-
         }
 
         // Initializing our PhotoView to display the full sized image of a crime when clicked
