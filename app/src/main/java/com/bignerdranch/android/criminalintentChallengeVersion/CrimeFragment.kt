@@ -10,7 +10,6 @@ import android.provider.ContactsContract
 import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
-import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,11 +18,11 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
 
 
 /** THIS IS THE CHALLENGE VERSION OF CRIMINAL INTENT **/
-
 
 private const val ARG_CRIME_ID = "crime_id"
 const val DIALOG_DATE = "DialogDate"
@@ -31,10 +30,6 @@ private const val DIALOG_TIME = "DialogTime"
 private const val REQUEST_CONTACT = 1
 private const val REQUEST_PHOTO = 2
 private const val DATE_FORMAT = "EEE, MMM, dd"
-
-
-// TODO: FIND THE SPANISH INTERPRETATIONS OF THE UNDERLINED STRING RESOURCE ERRORS.....
-
 
 // This is our Fragment which we will use to work on our Fragment's view
 // THIS FILE WILL CONTAIN OUR CRIME'S DETAIL
@@ -148,8 +143,9 @@ class CrimeFragment : Fragment() {
 
     // function to update UI wherever it is called
     private fun updateUI() {
+        val dateLocales = SimpleDateFormat("EEE, MMM dd, yyyy.", Locale.getDefault())
         titleField.setText(crime.title)
-        dateButton.text = DateFormat.format("EEE, MMM dd, yyyy.", this.crime.date)
+        dateButton.text = dateLocales.format(this.crime.date)
         solvedCheckedBox.apply {
             isChecked = crime.isSolved
             jumpDrawablesToCurrentState()  // this skips the checkBox animation whenever we load crime
@@ -158,7 +154,6 @@ class CrimeFragment : Fragment() {
         if (crime.suspect.isNotEmpty()) {
             suspectButton.text = crime.suspect
         }
-
         updatePhotoView()
     }
 
@@ -167,8 +162,10 @@ class CrimeFragment : Fragment() {
         if (photoFile.exists()) {
             val bitmap = getScaledBitmap(photoFile.path, imageViewWidth, imageViewHeight)
             photoView.setImageBitmap(bitmap)
+            photoView.contentDescription = getString(R.string.crime_photo_image_description)
         } else {
             photoView.setImageDrawable(null)
+            photoView.contentDescription = getString(R.string.crime_photo_no_image_description)
         }
     }
 
@@ -199,7 +196,6 @@ class CrimeFragment : Fragment() {
                     suspectButton.text = suspect
                 }
 
-
                 /** Query handling our Suspect's Phone Number. **/
 
                 // Our phoneNumber's contact id which will be obtained from our previous query
@@ -212,7 +208,6 @@ class CrimeFragment : Fragment() {
                     if (it.count == 0) return
                     it.moveToFirst()
                     val phoneId = it.getString(0)
-
 
                     val phoneUri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
                     // Specifies what field we want our query to return which is a Phone Number
@@ -230,13 +225,17 @@ class CrimeFragment : Fragment() {
                     }
                     crimeDetailViewModel.saveCrime(crime)
                 }
-
             }
             requestCode == REQUEST_PHOTO -> {
                 requireActivity().revokeUriPermission(photoUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
                 updatePhotoView()
             }
         }
+
+        // Informing the User that we have taken a picture wen we return to the detail part of the screen
+        photoView.postDelayed(Runnable {
+            photoView.announceForAccessibility("The Image has been taken")
+        }, 5)
     }
 
 
@@ -248,8 +247,8 @@ class CrimeFragment : Fragment() {
             getString(R.string.crime_report_unsolved)
         }
 
-        val dateLocale = DateFormat.getBestDateTimePattern(Locale.FRANCE, DATE_FORMAT)
-        val dateString = dateLocale.format(DATE_FORMAT, crime.date)
+        val dateLocale = SimpleDateFormat(DATE_FORMAT, Locale.getDefault())
+        val dateString = dateLocale.format(crime.date)
         val suspect = if (crime.suspect.isBlank()) {
             getString(R.string.crime_report_no_suspect)
         } else {
@@ -260,8 +259,12 @@ class CrimeFragment : Fragment() {
 
 
     // function to updateTime on a crime wherever it is called
+    /**
+     * Challenge 7 : Localizing Dates
+     * **/
     private fun updateTime() {
-        timePickerButton.text = DateFormat.format("HH:mm", crime.time)
+        val timeLocale = SimpleDateFormat("HH:mm", Locale.getDefault())
+        timePickerButton.text = timeLocale.format(crime.time)
     }
 
 
@@ -318,7 +321,6 @@ class CrimeFragment : Fragment() {
                 startActivity(chooserIntent)
             }
         }
-
 
         // Initializing our suspect button to be able to pick a suspect from our contacts App
         suspectButton.apply {

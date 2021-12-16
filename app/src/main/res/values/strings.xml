@@ -17,6 +17,13 @@
     <string name="crime_suspect_text">Choose Suspect</string>
     <string name="crime_report_text">Send Crime Report</string>
 
+    <string name="crime_photo_button_description" translatable="false">Take photo of crime scene</string>
+    <string name="crime_photo_no_image_description" translatable="false">Crime scene photo (not set)</string>
+    <string name="crime_photo_image_description" translatable="false">Crime scene photo (set)</string>
+
+    <string name="crime_brief_summary" translatable="false">%1s!. The crime\'s date is %2s, the time is %3s and %4s.</string>
+    <string name="crime_summary" translatable="false">%1s!. The crime\'s date is %2s, the time and %3s.</string>
+
     <string name="crime_report">%1$s! The crime was discovered on %2$s. %3$s, and %4$s</string>
     <string name="crime_report_solved">The case is solved</string>
     <string name="crime_report_unsolved">The case is not solved</string>
@@ -25,4 +32,6 @@
     <string name="crime_report_subject">CriminalIntent Crime Report</string>
     <string name="send_report">Send crime report via</string>
     <string name="call_suspect">Call Suspect</string>
+    <string name="date" translatable="false">DATE</string>
+    <string name="choose_suspect" translatable="false">Choose Suspect</string>
 </resources>

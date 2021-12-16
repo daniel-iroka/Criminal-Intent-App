@@ -13,7 +13,6 @@ private const val ARG_DATE = "date"
 
 /** THIS IS THE CHALLENGE VERSION OF CRIMINAL INTENT **/
 
-
 class DatePickerFragment: DialogFragment() {
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -52,7 +51,6 @@ class DatePickerFragment: DialogFragment() {
             initialDay
         )
     }
-
 
     // Here we store our "date" in our fragments bundle so that we can access it later
     companion object {

@@ -2,7 +2,6 @@ package com.bignerdranch.android.criminalintentChallengeVersion
 
 import android.content.Context
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.util.Log
 import android.view.*
 import android.widget.Button
@@ -16,6 +15,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import java.text.SimpleDateFormat
 import java.util.*
 
 private const val TAG = "CrimeListFragment"
@@ -57,14 +57,12 @@ class CrimeListFragment : Fragment() {
         callbacks = context as CallBacks?
     }
 
-
     // We call this callback function from our Activity to inflate our
     // fragment with our menu layout_file
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.fragment_crime_list, menu)
     }
-
 
     // This callbacks function is called when an action_item or menu_item has been selected
     // We then describe what we want to happen when it is selected which is to add a new crime
@@ -141,7 +139,6 @@ class CrimeListFragment : Fragment() {
         }
         // Making the textView also disappear
         addCrimeText.visibility = if (crimes.isEmpty()) View.VISIBLE else View.GONE
-
     }
 
 
@@ -171,10 +168,19 @@ class CrimeListFragment : Fragment() {
         // This function is added here so that our ViewHolder will do the binding work of the crimes instead of our TextViews(it is a good practice)
         override fun bind(crime: Crime) {
             /** CHALLENGE 2 : FORMATTING THE DATE - Using string.formatting, use the functions in the DateFormat class to change the format of the date. **/
+            val dateLocales = SimpleDateFormat("EEEE, MMM dd, yyyy.", Locale.getDefault())
+            val timeLocales = SimpleDateFormat("HH:mm", Locale.getDefault())
             this.crime = crime
             titleTextView.text = this.crime.title
-            dateTextView.text = DateFormat.format("EEEE, MMM dd, yyyy.", this.crime.date) // Challenge: Localizing Dates was done in main version
-            timeTextView.text = DateFormat.format("HH:mm", crime.time)
+            dateTextView.text = dateLocales.format(this.crime.date) // Challenge: Localizing Dates
+            timeTextView.text = timeLocales.format(this.crime.time)
+
+            val isSolved = "The case is solved"
+            if (solvedImageView.isVisible) {
+                itemView.contentDescription = getString(R.string.crime_brief_summary, crime.title, dateTextView.text, crime.time, isSolved)
+            } else {
+                itemView.contentDescription = getString(R.string.crime_summary, crime.title, dateTextView.text , crime.time)
+            }
 
             solvedImageView.visibility = if (crime.isSolved) {
                 View.VISIBLE
@@ -232,7 +238,6 @@ class CrimeListFragment : Fragment() {
                 )
             } **/
         }
-
 
         // Retrieves a viewType
         // CHALLENGE CODE SNIPPET

@@ -74,5 +74,4 @@
         app:layout_constraintHorizontal_bias="0.925"
         app:layout_constraintStart_toEndOf="@+id/crime_date"
         app:layout_constraintTop_toBottomOf="@+id/crime_title" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
