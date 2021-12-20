@@ -18,7 +18,8 @@ import com.bignerdranch.android.criminalintent2.Crime
 abstract class CrimeDatabase : RoomDatabase() {
 
 
-    // Hooking up our DAO to our Database
+    // Hooking up our DAO to our Database to be able to access irs functions and properties
+    // in our CrimeRepository
     abstract fun crimeDao() : CrimeDao
 }
 

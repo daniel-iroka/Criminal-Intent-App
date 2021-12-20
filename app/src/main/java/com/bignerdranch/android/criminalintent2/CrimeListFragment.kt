@@ -158,7 +158,6 @@ class CrimeListFragment : Fragment() {
             itemView.setOnClickListener(this)
         }
 
-
         // This function is added here so that our ViewHolder will do the binding work of the crimes instead of our TextViews(it is a good practice)
         // Because the Adapter should know as little as possible the details of the ViewHolder
         fun bind(crime: Crime) {
