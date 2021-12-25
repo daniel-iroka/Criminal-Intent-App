@@ -7,16 +7,12 @@ import java.util.*
 private const val TAG = "MainActivity"
 
 
-
 // Implementing Our Callbacks interface
 class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks  {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-
-
 
         /** || MAKING USE OF THE FRAGMENT MANAGER BY USING THE "supportFragmentManager" TO HANDLE THE FRAGMENT FOR US. || **/
 
@@ -25,10 +21,9 @@ class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks  {
         val currentFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container)
 
-
-        // this is null because there is no fragment with the given container ID. I don't know what this is
+        // this is null because there is no fragment with the given container ID
         if (currentFragment == null)  {
-            val fragment = CrimeListFragment()
+            val fragment = CrimeListFragment.newInstance()
             supportFragmentManager
                 .beginTransaction()   // This creates an instance of our FragmentTransaction and adds our Container view and fragment to it and commits it
                 .add(R.id.fragment_container, fragment)
