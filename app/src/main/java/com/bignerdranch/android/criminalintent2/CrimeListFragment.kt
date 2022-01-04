@@ -2,7 +2,6 @@ package com.bignerdranch.android.criminalintent2
 
 import android.content.Context
 import android.os.Bundle
-import android.text.format.DateFormat
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
@@ -232,8 +231,9 @@ class CrimeListFragment : Fragment() {
 
     //Whenever activities call this function, the instance of this fragment will be called
     companion object {
+
         fun newInstance() : CrimeListFragment {
-            return newInstance()
+            return CrimeListFragment()
         }
     }
 }
