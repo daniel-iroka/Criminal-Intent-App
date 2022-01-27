@@ -21,7 +21,7 @@ class MainActivity : AppCompatActivity(), CrimeListFragment.Callbacks  {
         val currentFragment =
             supportFragmentManager.findFragmentById(R.id.fragment_container)
 
-        // this is null because there is no fragment with the given container ID
+        // this is null because there is no fragment with the given container ID, therefore there is no fragment hosted by the current activity
         if (currentFragment == null)  {
             val fragment = CrimeListFragment.newInstance()
             supportFragmentManager
