@@ -1,4 +1,4 @@
-package com.bignerdranch.android.criminalintent2.database
+opackage com.bignerdranch.android.criminalintent2.database
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

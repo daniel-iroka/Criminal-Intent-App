@@ -18,7 +18,6 @@ private const val DATABASE_NAME = "crime-database"  // stores references to our 
 class CrimeRepository private constructor(context: Context) {
 
 
-
     // Room.databaseBuilder creates a concrete Implementation of our CrimeDatabase using three parameters(simply put it sets up our database)
     // first = is a context Object and we use our singleton
     // second = is the database we want "Room" to create for us
@@ -41,13 +40,11 @@ class CrimeRepository private constructor(context: Context) {
     private val filesDir = context.applicationContext.filesDir  // returns a handle(use, interaction) to the directory of a private file
 
 
-
     // We added this here so that other components can perform operations on our database
     fun getCrimes(): LiveData<List<Crime>> = crimeDao.getCrimes()
     fun getCrime(id: UUID): LiveData<Crime?> = crimeDao.getCrime(id)
 
-
-
+    
     /** Below is where we Implement our functions with the "executor" object which then performs operations in a background thread. **/
     fun updateCrime(crime: Crime)  {
         executor.execute {
