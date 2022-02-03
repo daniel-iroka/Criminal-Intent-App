@@ -78,7 +78,7 @@ class CrimeListFragment : Fragment() {
     }
 
 
-    // This is our LiveData Observer. LiveData.observe() object gets notified when the LiveData has been received in this case a list of crimes
+    // This is our LiveData Observer. LiveData.observe() object gets notified when the LiveData has been received(in this case a list of crimes).
     // The viewLifecycleOwner is tied to the life of the Activity or Fragment so that the process gets destroyed as the Activity does
     // But in this case it is tied to our Fragment's view
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
