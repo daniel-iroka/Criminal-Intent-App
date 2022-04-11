@@ -34,6 +34,8 @@ private const val DATE_FORMAT = "EEE, MMM, dd"
 
 /** FRAGMENT B **/
 
+// TODO - WHEN I COME BACK, I WILL CHANGE THE APP BAR'S COLOR TO MATCH THE APP'S ICON WHICH IS "BLUE".
+
 class CrimeFragment : Fragment()   {
 
     private lateinit var crime :Crime // this crime property represents the USER'S EDITS i.e the crime the USER wrote

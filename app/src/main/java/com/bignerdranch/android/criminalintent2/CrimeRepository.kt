@@ -9,8 +9,6 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.Executors
 
-
-
 private const val DATABASE_NAME = "crime-database"  // stores references to our database
 
 // Our CrimeRepository is responsible for fetching and storing data in a local database or remote server
