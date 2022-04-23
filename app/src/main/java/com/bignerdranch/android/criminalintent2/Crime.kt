@@ -4,7 +4,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.*
 
-// TODO - WHEN I COME BACK, I WILL FIX CRIMINAL INTENT BECAUSE I ACCIDENTALLY DELETED IT, I WILL CLONE THE PROJECT OR JUST GIT INIT AGAIN
 
 // This is a data class that will hold the list data for the crimes
 
